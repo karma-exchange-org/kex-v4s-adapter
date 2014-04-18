@@ -1,0 +1,16 @@
+/Referenced Packages/*
+.settings
+.project
+salesforce.schema
+*.iml
+*.ipr
+*.iws
+\#*
+.\#*
+.idea
+/*.DS_Store
+.classpath
+.settings
+.project
+*~
+*.sublime-workspace
