@@ -1,6 +1,5 @@
 /Referenced Packages/*
 .settings
-.project
 salesforce.schema
 *.iml
 *.ipr
@@ -11,6 +10,5 @@ salesforce.schema
 /*.DS_Store
 .classpath
 .settings
-.project
 *~
 *.sublime-workspace
