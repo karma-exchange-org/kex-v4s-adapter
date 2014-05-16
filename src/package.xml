@@ -7,6 +7,8 @@
         <members>KexLimitReachedException</members>
         <members>KexRegistrationController</members>
         <members>KexRegistrationControllerTest</members>
+        <members>KexSourceParticipant</members>
+        <members>KexSourceUser</members>
         <members>KexSyncShift</members>
         <name>ApexClass</name>
     </types>
