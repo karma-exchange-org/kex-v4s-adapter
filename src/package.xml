@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>KexEvent</members>
-        <members>KexInvalidParamException</members>
-        <members>KexInvalidParamExceptionTest</members>
-        <members>KexLimitReachedException</members>
-        <members>KexRegistrationController</members>
-        <members>KexRegistrationControllerTest</members>
-        <members>KexSourceParticipant</members>
-        <members>KexSourceUser</members>
-        <members>KexSyncShift</members>
+        <members>*</members>
         <name>ApexClass</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>ApexPage</name>
     </types>
     <types>
         <members>*</members>

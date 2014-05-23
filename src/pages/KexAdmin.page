@@ -1,0 +1,10 @@
+<apex:page cache="true" controller="KexAdminController" title="Karma Exchange Admin Console">
+    <apex:form >
+        <p>
+            <apex:commandButton action="{!syncUpcomingShifts}" value=" Sync All Upcoming Volunteer Shifts "/>
+        </p>
+        <p>
+            <apex:commandButton action="{!enableAutoSync}" value=" Enable Automatic Volunteer Shift Sync "/>
+        </p>
+    </apex:form>
+</apex:page>

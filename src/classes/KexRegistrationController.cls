@@ -2,8 +2,8 @@
 global with sharing class KexRegistrationController {
 
     private enum RegistrationAction {
-    	REGISTER,
-    	UNREGISTER
+        REGISTER,
+        UNREGISTER
     }
 
     // TODO(avaliani): handle unregister. Rename controller from signup to 'register'. See if
@@ -37,7 +37,7 @@ global with sharing class KexRegistrationController {
               for update];
         Contact contact;
         if (contactQueryResult.isEmpty()) {
-            contact = new Contact(FirstName = firstName, LastName = lastName, Email = email);
+            contact = new Contact(FirstName = firstName, LastName = lastName, Email = email,GW_Volunteers__Volunteer_Last_Web_Signup_Date__c=Date.today());
             insert contact;
             System.debug('Creating new contact: ' + contact);
         } else {
@@ -63,41 +63,44 @@ global with sharing class KexRegistrationController {
              where GW_Volunteers__Contact__c = :contact.Id and
                 GW_Volunteers__Volunteer_Shift__c = :shiftId
              for update];
-         
-         System.debug('duplicate ' + action);
-         System.debug('duplicate2 ' + RegistrationAction.REGISTER.name());
+
+        System.debug('duplicate ' + action);
+        System.debug('duplicate2 ' + RegistrationAction.REGISTER.name());
 
         // Prevent duplicate signups
         if ( action.equals(RegistrationAction.REGISTER.name()) ) {
-	        if (hoursQuery.isEmpty() || (hoursQuery[0].GW_Volunteers__Status__c != 'Confirmed')) {
-	            if (shift.GW_Volunteers__Number_of_Volunteers_Still_Needed__c == 0) {
-	                throw new KexLimitReachedException('volunteer limit reached');
-	            }
+            if (hoursQuery.isEmpty() || (hoursQuery[0].GW_Volunteers__Status__c != 'Confirmed')) {
+                if (shift.GW_Volunteers__Number_of_Volunteers_Still_Needed__c == 0) {
+                    throw new KexLimitReachedException('volunteer limit reached');
+                }
 
-	            GW_Volunteers__Volunteer_Hours__c hours;
-	            if (hoursQuery.isEmpty()) {
-	                DateTime shiftDate = shift.GW_Volunteers__Start_Date_Time__c;
-	                hours = new GW_Volunteers__Volunteer_Hours__c(
-	                    GW_Volunteers__Contact__c = contact.ID,
-	                    GW_Volunteers__Volunteer_Shift__c = shiftId,
-	                    GW_Volunteers__Volunteer_Job__c = shift.GW_Volunteers__Volunteer_Job__c,
-	                    GW_Volunteers__Start_Date__c =
-	                        Date.newInstance(shiftDate.year(), shiftDate.month(), shiftDate.day()),
-	                    GW_Volunteers__Status__c = 'Confirmed',
-	                    GW_Volunteers__Number_of_Volunteers__c = 1);
+                GW_Volunteers__Volunteer_Hours__c hours;
+                if (hoursQuery.isEmpty()) {
+                    DateTime shiftDate = shift.GW_Volunteers__Start_Date_Time__c;
+                    hours = new GW_Volunteers__Volunteer_Hours__c(
+                        GW_Volunteers__Contact__c = contact.ID,
+                        GW_Volunteers__Volunteer_Shift__c = shiftId,
+                        GW_Volunteers__Volunteer_Job__c = shift.GW_Volunteers__Volunteer_Job__c,
+                        GW_Volunteers__Start_Date__c =
+                            Date.newInstance(shiftDate.year(), shiftDate.month(), shiftDate.day()),
+                        GW_Volunteers__Status__c = 'Web Sign Up',
+                        GW_Volunteers__Number_of_Volunteers__c = 1);
 
-	                System.debug('[register] creating new hours entry: ' + hours);
+                    System.debug('[register] creating new hours entry: ' + hours);
 
-	                insert hours;
+                    insert hours;
+                    hours.GW_Volunteers__Status__c = 'Confirmed';
+                    update hours;
 
-	            } else {
-	                System.debug('[register] updating existing hours entry - old: ' + hours);
 
-	                hours = hoursQuery[0];
-	                hours.GW_Volunteers__Status__c = 'Confirmed';
-	                update hours;
-	            }
-	        }
+                } else {
+                    System.debug('[register] updating existing hours entry - old: ' + hours);
+
+                    hours = hoursQuery[0];
+                    hours.GW_Volunteers__Status__c = 'Confirmed';
+                    update hours;
+                }
+            }
         } else if (!hoursQuery.isEmpty()) {
             GW_Volunteers__Volunteer_Hours__c hours = hoursQuery[0];
 
