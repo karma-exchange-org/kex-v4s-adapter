@@ -16,7 +16,8 @@ global with sharing class KexSyncPendingJobsBatch implements Database.Batchable<
             jobs.add(sync.Volunteer_Job__c);
         }
 
-        return Database.getQueryLocator('SELECT ID FROM GW_Volunteers__Volunteer_Shift__c WHERE GW_Volunteers__Volunteer_Job__c in :jobs order by CreatedDate asc');
+        return Database.getQueryLocator(
+            'SELECT ID FROM GW_Volunteers__Volunteer_Shift__c WHERE GW_Volunteers__Volunteer_Job__c in :jobs order by CreatedDate asc');
     }
 
     global void execute(Database.BatchableContext BC, List<GW_Volunteers__Volunteer_Shift__c> jobShifts){
@@ -31,9 +32,10 @@ global with sharing class KexSyncPendingJobsBatch implements Database.Batchable<
     }
 
     global void finish(Database.BatchableContext BC) {
+        // If the batch job fails mid-way nothing gets deleted. But failures should
+        // be rare since all the batch job is doing is converting jobs into shifts.
         delete syncList;
         database.executebatch(
-            new KexSyncPendingShiftsBatch(),
-            KexSyncPendingShiftsBatch.BATCH_SIZE);
+            new KexCompactAndSyncPendingShiftsBatch());
     }
 }
