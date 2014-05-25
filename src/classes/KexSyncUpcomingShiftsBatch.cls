@@ -16,7 +16,6 @@ global with sharing class KexSyncUpcomingShiftsBatch implements Database.Batchab
 
     global void finish(Database.BatchableContext BC) {
         database.executebatch(
-            new KexSyncPendingShiftsBatch(),
-            KexSyncPendingShiftsBatch.BATCH_SIZE);
+            new KexCompactAndSyncPendingShiftsBatch());
     }
 }
