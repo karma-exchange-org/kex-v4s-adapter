@@ -12,3 +12,4 @@ salesforce.schema
 .settings
 *~
 *.sublime-workspace
+.project
