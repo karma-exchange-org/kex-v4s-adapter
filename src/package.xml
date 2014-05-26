@@ -11,6 +11,7 @@
         <members>KexSourceEvent</members>
         <members>KexSourceParticipant</members>
         <members>KexSourceUser</members>
+        <members>KexSyncFailureException</members>
         <members>KexSyncPendingJobsBatch</members>
         <members>KexSyncPendingShiftsBatch</members>
         <members>KexSyncRequest</members>

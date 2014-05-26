@@ -54,9 +54,17 @@ public with sharing class KexSyncRequest {
 
         System.debug('KexSyncRequest: response:' + res);
         System.debug('KexSyncRequest: response body:' + res.getBody());
+
+        if (!reqSuccessful(res)) {
+            throw new KexSyncFailureException('Http request to Karma Exchange failed: ' + res.toString());
+        }
     }
 
     private static String getHostHeader(String url) {
         return url.replaceFirst('^https?://', '');
+    }
+
+    private static boolean reqSuccessful(HttpResponse res) {
+        return (200 <= res.getStatusCode()) && (res.getStatusCode() <= 299);
     }
 }
