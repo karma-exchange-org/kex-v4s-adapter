@@ -2,6 +2,7 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>KexAdminController</members>
+        <members>KexAuthFailureException</members>
         <members>KexCompactAndSyncPendingShiftsBatch</members>
         <members>KexErrorInfo</members>
         <members>KexInvalidParamException</members>
