@@ -5,14 +5,16 @@ public with sharing class KexSourceEvent {
     private static final String VH_STATUS_COMPLETED = 'Completed';
     private static final String VH_STATUS_NO_SHOW = 'No-Show';
 
-    public String sourceKey;
+    public String sourceEventId;
+    public long sourceLastModifiedDate;
+    public List<KexSourceParticipant> sourceParticipants = new List<KexSourceParticipant>();
+
     public String title;
     public String descriptionHtml;
     public Location location;
     public long startTime;
     public long endTime;
     public Integer maxRegistrations;
-    public List<KexSourceParticipant> sourceParticipants = new List<KexSourceParticipant>();
 
     public class Location {
         public String title;
@@ -34,7 +36,14 @@ public with sharing class KexSourceEvent {
         public Decimal longitude;
     }
 
+    public static KexSourceEvent toEvent(Id shiftId) {
+        List<KexSourceEvent> eventQueryResult = toEvents(new List<Id> { shiftId });
+        return eventQueryResult.isEmpty() ? null : eventQueryResult[0];
+    }
+
     public static List<KexSourceEvent> toEvents(List<Id> shiftIds) {
+        List<KexSourceEvent> eventList = new List<KexSourceEvent>();
+
         GW_Volunteers__Volunteer_Shift__c[] shiftQuery =
                [select GW_Volunteers__Volunteer_Job__c,
                    GW_Volunteers__Volunteer_Job__r.Name,
@@ -54,21 +63,17 @@ public with sharing class KexSourceEvent {
                    GW_Volunteers__Volunteer_Job__r.Volunteer_Job_Contact__r.Email,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Campaign_Contact__r.FirstName,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Campaign_Contact__r.LastName,
-                   GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Campaign_Contact__r.Email
-
+                   GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Campaign_Contact__r.Email,
+                   LastModifiedDate
                 from GW_Volunteers__Volunteer_Shift__c
                 where Id in :shiftIds];
 
-        if (shiftQuery.isEmpty()) {
-            return null;
-        }
-        List<KexSourceEvent> eventList = new List<KexSourceEvent>();
-        for(GW_Volunteers__Volunteer_Shift__c shift : shiftQuery)
-        {
+        for(GW_Volunteers__Volunteer_Shift__c shift : shiftQuery) {
             GW_Volunteers__Volunteer_Job__c job = shift.GW_Volunteers__Volunteer_Job__r;
 
             KexSourceEvent event = new KexSourceEvent();
-            event.sourceKey = shift.Id;
+            event.sourceEventId = shift.Id;
+            event.sourceLastModifiedDate = shift.LastModifiedDate.getTime();
 
             event.title = job.Name;
             event.descriptionHtml = job.GW_Volunteers__Description__c;
@@ -103,7 +108,7 @@ public with sharing class KexSourceEvent {
 
             event.maxRegistrations = shift.GW_Volunteers__Desired_Number_of_Volunteers__c.intValue();
 
-            event.sourceParticipants = getParticipants(shift);
+            event.setParticipants(shift);
 
             // Skipping shift description for now.
             // TODO(avaliani): add this once there is shift support
@@ -112,15 +117,18 @@ public with sharing class KexSourceEvent {
         return eventList;
     }
 
-    private static List<KexSourceParticipant> getParticipants(GW_Volunteers__Volunteer_Shift__c shift) {
-        List<KexSourceParticipant> sourceParticipants = new List<KexSourceParticipant>();
+    private void setParticipants(GW_Volunteers__Volunteer_Shift__c shift) {
+        sourceParticipants = new List<KexSourceParticipant>();
 
+        // TODO(avaliani): for efficiency we could move this query to the shift query as a nested
+        //   query.
         List<GW_Volunteers__Volunteer_Hours__c> shiftVolunteers =
             [Select
                 GW_Volunteers__Status__c,
                 GW_Volunteers__Contact__r.FirstName,
                 GW_Volunteers__Contact__r.LastName,
-                GW_Volunteers__Contact__r.Email
+                GW_Volunteers__Contact__r.Email,
+                LastModifiedDate
              from GW_Volunteers__Volunteer_Hours__c
              where GW_Volunteers__Volunteer_Shift__c = :shift.Id];
 
@@ -131,6 +139,11 @@ public with sharing class KexSourceEvent {
         // Canceled - ignored. The volunteer can no longer do this job or shift. This status
         //            prevents the system scheduler from re-assigning a recurring volunteer to this shift.
         for (GW_Volunteers__Volunteer_Hours__c shiftVolunteer : shiftVolunteers) {
+            long lastModifiedDate = shiftVolunteer.LastModifiedDate.getTime();
+            if (lastModifiedDate > sourceLastModifiedDate) {
+                sourceLastModifiedDate = lastModifiedDate;
+            }
+
             String participantType = null;
             if (  shiftVolunteer.GW_Volunteers__Status__c.equals(VH_STATUS_CONFIRMED) ||
                   shiftVolunteer.GW_Volunteers__Status__c.equals(VH_STATUS_WEB_SIGN_UP) ||
@@ -152,8 +165,6 @@ public with sharing class KexSourceEvent {
         }
 
         sourceParticipants.addAll(getOrganizers( shift));
-
-        return sourceParticipants;
     }
 
     public static List<KexSourceParticipant> getOrganizers(GW_Volunteers__Volunteer_Shift__c shift) {

@@ -30,7 +30,7 @@ global with sharing class KexSyncPendingShiftsBatch implements Database.Batchabl
         // Create deletion requests
         Set<Id> deletionShifts = new Set<Id>(allShifts);
         for(KexSyncRequest ksr : syncReqs) {
-            deletionShifts.remove(ksr.sourceKey);
+            deletionShifts.remove(ksr.sourceEventId);
         }
         createDeletionReqs(syncReqs, deletionShifts);
 
@@ -41,7 +41,7 @@ global with sharing class KexSyncPendingShiftsBatch implements Database.Batchabl
         List<KexSourceEvent> sourceEvents = KexSourceEvent.toEvents(new List<Id>(shifts));
         for(KexSourceEvent ke : sourceEvents) {
             syncReqs.add(
-                new KexSyncRequest(KexSyncRequest.ACTION_UPSERT, ke.sourceKey, ke));
+                new KexSyncRequest(KexSyncRequest.ACTION_UPSERT, ke.sourceEventId, ke));
         }
     }
 

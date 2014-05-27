@@ -1,27 +1,36 @@
 @RestResource(urlMapping='/registration/*')
 global with sharing class KexRegistrationController {
 
-    private enum RegistrationAction {
-        REGISTER,
-        UNREGISTER
-    }
-
-    // TODO(avaliani): handle unregister. Rename controller from signup to 'register'. See if
-    //   different methods can have different rest resource paths
-    // TODO(avaliani): integration. Handle new exception mechanism
-
     @HttpPost
-    global static void doPost(String action, String sourceKey,
+    global static RegistrationResponse doPost(String action, String eventId,
            String firstName, String lastName, String email) {
 
-        KexInvalidParamException.notNull('action', action);
-        KexInvalidParamException.notNull('sourceKey', sourceKey);
-        KexInvalidParamException.notNull('firstName', firstName);
-        KexInvalidParamException.notNull('lastName', lastName);
-        KexInvalidParamException.notNull('email', email);
+        try {
+            KexInvalidParamException.notNull('eventId', eventId);
+            KexInvalidParamException.notNull('action', action);
+            KexInvalidParamException.notNull('firstName', firstName);
+            KexInvalidParamException.notNull('lastName', lastName);
+            KexInvalidParamException.notNull('email', email);
+        } catch (KexInvalidParamException e) {
+            return new RegistrationResponse(
+                new KexErrorInfo((KexTypedException) e));
+        }
 
-        String shiftId = sourceKey;
+        String shiftId = eventId;
+        KexSourceEvent event;
+        try {
+            execute(action, shiftId, firstName, lastName, email);
+            // Return the updated shift information.
+            return new RegistrationResponse(KexSourceEvent.toEvent(shiftId));
+        } catch (KexTypedException e) {
+            return new RegistrationResponse(KexSourceEvent.toEvent(shiftId), new KexErrorInfo(e));
+        } catch (Exception e) {
+            return new RegistrationResponse(KexSourceEvent.toEvent(shiftId), new KexErrorInfo(e));
+        }
+    }
 
+    private static void execute(String action, String shiftId,
+           String firstName, String lastName, String email) {
         System.debug('Processing signup request:' +
           'action=' + action + ', ' +
           'shiftId=' + shiftId + ', ' +
@@ -29,49 +38,36 @@ global with sharing class KexRegistrationController {
           'lastName=' + lastName + ', ' +
           'email=' + email);
 
-        Contact[] contactQueryResult =
-          [Select c.ID from Contact c where
-              c.FirstName = :firstName and
-              c.LastName = :lastName and
-              c.Email = :email
-              for update];
-        Contact contact;
-        if (contactQueryResult.isEmpty()) {
-            contact = new Contact(FirstName = firstName, LastName = lastName, Email = email,GW_Volunteers__Volunteer_Last_Web_Signup_Date__c=Date.today());
-            insert contact;
-            System.debug('Creating new contact: ' + contact);
-        } else {
-            contact = contactQueryResult[0];
-            System.debug('Found contact: ' + contact);
-        }
+        Contact contact = lookupOrCreateContact(firstName, lastName, email);
 
         // TODO(avaliani): Do we need a select for update here? Triggers is going to update this.
         //   Is the trigger updating it as part of the same txn or only post-commit?
-        GW_Volunteers__Volunteer_Shift__c shift =
+        List<GW_Volunteers__Volunteer_Shift__c> shiftQuery =
             [Select GW_Volunteers__Number_of_Volunteers_Still_Needed__c,
                 GW_Volunteers__Start_Date_Time__c,
                 GW_Volunteers__Volunteer_Job__c
              from GW_Volunteers__Volunteer_Shift__c
-             where Id = :shiftId
-             for update];
-        System.debug('Num volunteers needed: ' +
-            shift.GW_Volunteers__Number_of_Volunteers_Still_Needed__c);
+             where Id = :shiftId];
+        if (shiftQuery.isEmpty()) {
+            throw new KexObjectNotFoundException(shiftId);
+        }
+        GW_Volunteers__Volunteer_Shift__c shift = shiftQuery[0];
 
-        GW_Volunteers__Volunteer_Hours__c[] hoursQuery =
+        List<GW_Volunteers__Volunteer_Hours__c> hoursQuery =
             [Select GW_Volunteers__Status__c
              from GW_Volunteers__Volunteer_Hours__c
              where GW_Volunteers__Contact__c = :contact.Id and
                 GW_Volunteers__Volunteer_Shift__c = :shiftId
              for update];
 
-        System.debug('duplicate ' + action);
-        System.debug('duplicate2 ' + RegistrationAction.REGISTER.name());
+        System.debug('Num volunteers needed: ' +
+            shift.GW_Volunteers__Number_of_Volunteers_Still_Needed__c);
 
         // Prevent duplicate signups
         if ( action.equals(RegistrationAction.REGISTER.name()) ) {
             if (hoursQuery.isEmpty() || (hoursQuery[0].GW_Volunteers__Status__c != 'Confirmed')) {
                 if (shift.GW_Volunteers__Number_of_Volunteers_Still_Needed__c == 0) {
-                    throw new KexLimitReachedException('volunteer limit reached');
+                    throw new KexRegistrationLimitReachedException();
                 }
 
                 GW_Volunteers__Volunteer_Hours__c hours;
@@ -86,16 +82,11 @@ global with sharing class KexRegistrationController {
                         GW_Volunteers__Status__c = 'Web Sign Up',
                         GW_Volunteers__Number_of_Volunteers__c = 1);
 
-                    System.debug('[register] creating new hours entry: ' + hours);
-
                     insert hours;
+                    // We need to do this to ensure the new web signup email workflow is processed.
                     hours.GW_Volunteers__Status__c = 'Confirmed';
                     update hours;
-
-
                 } else {
-                    System.debug('[register] updating existing hours entry - old: ' + hours);
-
                     hours = hoursQuery[0];
                     hours.GW_Volunteers__Status__c = 'Confirmed';
                     update hours;
@@ -103,11 +94,52 @@ global with sharing class KexRegistrationController {
             }
         } else if (!hoursQuery.isEmpty()) {
             GW_Volunteers__Volunteer_Hours__c hours = hoursQuery[0];
-
-            System.debug('[unregister] old: ' + hours);
-
             hours.GW_Volunteers__Status__c = 'Canceled';
             update hours;
+        }
+    }
+
+    private static Contact lookupOrCreateContact(String firstName, String lastName, String email) {
+        // TODO(avaliani): close out timing window for duplicate contacts.
+        Contact[] contactQueryResult =
+          [Select c.ID from Contact c where
+              c.FirstName = :firstName and
+              c.LastName = :lastName and
+              c.Email = :email];
+        Contact contact;
+        if (contactQueryResult.isEmpty()) {
+            contact = new Contact(
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                GW_Volunteers__Volunteer_Last_Web_Signup_Date__c = Date.today());
+            insert contact;
+        } else {
+            contact = contactQueryResult[0];
+        }
+        return contact;
+    }
+
+    private enum RegistrationAction {
+        REGISTER,
+        UNREGISTER
+    }
+
+    global class RegistrationResponse {
+        KexSourceEvent sourceEvent;
+        KexErrorInfo error;
+
+        public RegistrationResponse(KexSourceEvent sourceEvent) {
+            this(sourceEvent, null);
+        }
+
+        public RegistrationResponse(KexErrorInfo error) {
+            this(null, error);
+        }
+
+        public RegistrationResponse(KexSourceEvent sourceEvent, KexErrorInfo error) {
+            this.sourceEvent = sourceEvent;
+            this.error = error;
         }
     }
  }

@@ -12,16 +12,16 @@ public with sharing class KexSyncRequest {
     private static final String PARAM_ORG_SECRET = 'org_secret';
 
     public String action;
-    public String sourceKey;
+    public String sourceEventId;
     public KexSourceEvent sourceEvent;
 
-    public KexSyncRequest(String action, String sourceKey) {
-        this(action, sourceKey, null);
+    public KexSyncRequest(String action, String sourceEventId) {
+        this(action, sourceEventId, null);
     }
 
-    public KexSyncRequest(String action, String sourceKey, KexSourceEvent sourceEvent) {
+    public KexSyncRequest(String action, String sourceEventId, KexSourceEvent sourceEvent) {
         this.action = action;
-        this.sourceKey = sourceKey;
+        this.sourceEventId = sourceEventId;
         this.sourceEvent = sourceEvent;
     }
 
@@ -55,6 +55,7 @@ public with sharing class KexSyncRequest {
         System.debug('KexSyncRequest: response:' + res);
         System.debug('KexSyncRequest: response body:' + res.getBody());
 
+        // Note: in addition to the SyncFailureException a CalloutException can be thrown by Apex.
         if (!reqSuccessful(res)) {
             throw new KexSyncFailureException('Http request to Karma Exchange failed: ' + res.toString());
         }
