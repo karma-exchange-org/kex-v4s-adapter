@@ -3,11 +3,13 @@
     <types>
         <members>KexAdminController</members>
         <members>KexCompactAndSyncPendingShiftsBatch</members>
+        <members>KexErrorInfo</members>
         <members>KexInvalidParamException</members>
         <members>KexInvalidParamExceptionTest</members>
-        <members>KexLimitReachedException</members>
+        <members>KexObjectNotFoundException</members>
         <members>KexRegistrationController</members>
         <members>KexRegistrationControllerTest</members>
+        <members>KexRegistrationLimitReachedException</members>
         <members>KexSourceEvent</members>
         <members>KexSourceParticipant</members>
         <members>KexSourceUser</members>
@@ -16,6 +18,7 @@
         <members>KexSyncPendingShiftsBatch</members>
         <members>KexSyncRequest</members>
         <members>KexSyncUpcomingShiftsBatch</members>
+        <members>KexTypedException</members>
         <name>ApexClass</name>
     </types>
     <types>

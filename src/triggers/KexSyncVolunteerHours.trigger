@@ -1,6 +1,14 @@
 trigger KexSyncVolunteerHours on GW_Volunteers__Volunteer_Hours__c (
         after delete, after insert, after undelete, after update) {
 
+    // VOL_VolunteerHours_ShiftRollups automatically updates the shift if a 'Confirmed' or 'Completed'
+    // volunteer has changed his status. Confirmed / Completed volunteers are the only ones that
+    // count towards the total volunteer count. For Karma Exchange we also want to track those
+    // that are pending confirmation 'Web Sign Up'. Therefore we could modify the trigger to
+    // rely on the VOL_VolunteerHours_ShiftRollups tigger and avoid tracking volunteer hours that
+    // we know will be propogated on shift update. But since we have a compaction phase on sync
+    // we'll take the trigger hit for now.
+
     List<GW_Volunteers__Volunteer_Hours__c> vhToSync;
     if(Trigger.isDelete) {
         vhToSync = Trigger.old;
