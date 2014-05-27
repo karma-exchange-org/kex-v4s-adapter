@@ -1,9 +1,11 @@
 @RestResource(urlMapping='/registration/*')
 global with sharing class KexRegistrationController {
 
+    private static final String ORG_SECRET = Karma_Exchange_Admin_Settings__c.getInstance().SecretKey__c;
+
     @HttpPost
     global static RegistrationResponse doPost(String action, String eventId,
-           String firstName, String lastName, String email) {
+           String firstName, String lastName, String email, String secretKey) {
 
         try {
             KexInvalidParamException.notNull('eventId', eventId);
@@ -11,9 +13,13 @@ global with sharing class KexRegistrationController {
             KexInvalidParamException.notNull('firstName', firstName);
             KexInvalidParamException.notNull('lastName', lastName);
             KexInvalidParamException.notNull('email', email);
-        } catch (KexInvalidParamException e) {
+            KexInvalidParamException.notNull('secretKey', secretKey);
+            if (!ORG_SECRET.equals(secretKey)) {
+                throw new KexAuthFailureException();
+            }
+        } catch (KexTypedException e) {
             return new RegistrationResponse(
-                new KexErrorInfo((KexTypedException) e));
+                new KexErrorInfo(e));
         }
 
         String shiftId = eventId;

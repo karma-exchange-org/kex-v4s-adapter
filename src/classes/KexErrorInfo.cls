@@ -1,5 +1,6 @@
 public with sharing class KexErrorInfo {
     public enum ErrorType {
+        AUTHENTICATION_FAILURE,
         INVALID_PARAM,
         REGISTRATION_LIMIT_REACHED,
         OBJECT_NOT_FOUND,
