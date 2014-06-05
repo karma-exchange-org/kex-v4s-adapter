@@ -114,7 +114,7 @@ d. Try registering and unregistering and see if the changes are reflected in sal
 * Select the "Karma Exchange Admin" tab
 * Click "Enable Automatic Volunteer Shift Sync"
 
-Note: if you have a live db then you should always enable this to prevent the tracking table from growing to large. In a future version of the unmanaged package we will only upload entries to the tracking table if automatic shift sync is enabled.
+Note: if you have a live db then you should always enable this to prevent the tracking table from growing too large. In a future version of the unmanaged package we will only upload entries to the tracking table if automatic shift sync is enabled.
 
 ### Test Salesforce DB setup
 
