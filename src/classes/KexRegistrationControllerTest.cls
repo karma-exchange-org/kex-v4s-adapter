@@ -1,40 +1,70 @@
-@IsTest public with sharing class KexRegistrationControllerTest {
-@IsTest(SeeAllData=true)
-public static void testdoPost() {
-	String firstName = getRandomName(9);
-	String lastName = getRandomName(4);
-	String email = firstName + '.' + lastName + '@' + getRandomName(3) + '.' + getRandomName(2);
-	System.debug('*****' + firstName + ' ' + lastName + ' ' + email);
-      //Test for creating New User
-      KexRegistrationController.doPost('REGISTER', 'a04i000000DMfk8AAD', firstName, lastName, email);
-      List<Contact> c = [select Id, Email from Contact where Email = :email];
-      System.debug('Created Contact: ' + c);
-      System.assert(c[0].Id != null);
-      System.assert(c[0].Email == email);
-      //Test for existing user
-      KexRegistrationController.doPost('REGISTER', 'a04i000000CTk2JAAT', firstName, lastName, email);
-      //Test for same user, registering the same event again
-      KexRegistrationController.doPost('REGISTER', 'a04i000000CTk2JAAT', firstName, lastName, email);
+@IsTest
+private class KexRegistrationControllerTest {
 
+    static testmethod void testDoPost() {
+        KexTestDataFactory testDataFactory = new KexTestDataFactory();
+        Id shiftId = testDataFactory.createShift().id;
+        KexRegistrationController.RegistrationResponse regResult = KexRegistrationController.doPost('REGISTER',
+            shiftId, 'KexTestFirst', 'KexTestLast', 'KexTestEmail@x.y',
+            KexTestDataFactory.SECRET_KEY);
+        System.assert(regResult.error == null,
+            'registration not successful: ' + JSON.serialize(regResult.error));
+    }
 
-  }
+    static testmethod void testAuthFailureException() {
+        KexTestDataFactory testDataFactory = new KexTestDataFactory();
+        Id shiftId = testDataFactory.createShift().id;
+        KexRegistrationController.RegistrationResponse regResult = KexRegistrationController.doPost('REGISTER',
+            shiftId, 'KexTestFirst', 'KexTestLast', 'KexTestEmail@x.y',
+            KexTestDataFactory.INVALID_SECRET_KEY);
+        System.assert(regResult.error != null, 'doPost should not have succeeded');
+        System.assert(regResult.error.type.equals(KexErrorInfo.ErrorType.AUTHENTICATION_FAILURE.name()),
+            'error type should be auth failure: '  + regResult.error.type);
+    }
 
+    static testmethod void testInvalidParamException() {
+        KexTestDataFactory testDataFactory = new KexTestDataFactory();
+        KexRegistrationController.RegistrationResponse regResult = KexRegistrationController.doPost('REGISTER',
+            null, 'KexTestFirst', 'KexTestLast', 'KexTestEmail@x.y',
+            KexTestDataFactory.SECRET_KEY);
+        System.assert(regResult.error != null, 'doPost should not have succeeded');
+        System.assert(regResult.error.type.equals(KexErrorInfo.ErrorType.INVALID_PARAM.name()),
+            'null shift param is invalid: '  + regResult.error.type);
+    }
 
-public static String getRandomName(Integer numberOfLetters){
-   String allChars='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-   String name='';
-   for(integer cnt=0; cnt<=numberOfLetters;cnt++)   {
-       Integer i = 1+Math.Round(700.0*Math.random()/26);
-       if (i<=26)
-       {
-          i--;
-          String newStr=allChars.substring(i,i+1);
-          name=name+newStr;
-      }else{
-        cnt--;
-      }
-  }
-  return name;
-}
+    static testmethod void testObjectNotFoundException() {
+        KexTestDataFactory testDataFactory = new KexTestDataFactory();
+        GW_Volunteers__Volunteer_Shift__c shift =
+            testDataFactory.createShift();
+        delete shift;
+
+        KexRegistrationController.RegistrationResponse regResult = KexRegistrationController.doPost('REGISTER',
+            shift.id, 'KexTestFirst', 'KexTestLast', 'KexTestEmail@x.y',
+            KexTestDataFactory.SECRET_KEY);
+        System.assert(regResult.error != null, 'doPost should not have succeeded');
+        System.assert(regResult.error.type.equals(KexErrorInfo.ErrorType.OBJECT_NOT_FOUND.name()),
+            'deleted shift should not be found: '  + regResult.error.type);
+    }
+
+    static testmethod void testRegistrationLimitReachedException() {
+        KexTestDataFactory testDataFactory = new KexTestDataFactory();
+        Id shiftId = testDataFactory.createShift().id;
+        Contact contact;
+        for (Integer i=0; i < KexTestDataFactory.MAX_SHIFT_VOLUNTEERS; i++) {
+            contact = testDataFactory.createContact();
+            KexRegistrationController.RegistrationResponse regResult = KexRegistrationController.doPost('REGISTER',
+                shiftId, contact.firstName, contact.lastName, contact.Email,
+                KexTestDataFactory.SECRET_KEY);
+            System.assert(regResult.error == null, 'doPost should succeed');
+        }
+        // The next registration should fail.
+        contact = testDataFactory.createContact();
+        KexRegistrationController.RegistrationResponse regResult = KexRegistrationController.doPost('REGISTER',
+            shiftId, contact.firstName, contact.lastName, contact.Email,
+            KexTestDataFactory.SECRET_KEY);
+        System.assert(regResult.error != null, 'doPost should not have succeeded');
+        System.assert(regResult.error.type.equals(KexErrorInfo.ErrorType.REGISTRATION_LIMIT_REACHED.name()),
+            'expected registration limit error: '  + regResult.error.type);
+    }
 
 }

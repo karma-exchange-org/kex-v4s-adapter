@@ -106,7 +106,10 @@ public with sharing class KexSourceEvent {
             endTime = endTime.addMinutes((durationHours * 60).intValue());
             event.endTime = endTime.getTime();
 
-            event.maxRegistrations = shift.GW_Volunteers__Desired_Number_of_Volunteers__c.intValue();
+            event.maxRegistrations =
+                (shift.GW_Volunteers__Desired_Number_of_Volunteers__c != null) ?
+                shift.GW_Volunteers__Desired_Number_of_Volunteers__c.intValue() :
+                0;
 
             event.setParticipants(shift);
 
@@ -167,7 +170,7 @@ public with sharing class KexSourceEvent {
         sourceParticipants.addAll(getOrganizers( shift));
     }
 
-    public static List<KexSourceParticipant> getOrganizers(GW_Volunteers__Volunteer_Shift__c shift) {
+    private static List<KexSourceParticipant> getOrganizers(GW_Volunteers__Volunteer_Shift__c shift) {
         List<KexSourceParticipant> participants = new List<KexSourceParticipant>();
         List<KexSourceParticipant> others = new List<KexSourceParticipant>();
         KexSourceParticipant primary = null;
