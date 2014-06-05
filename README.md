@@ -10,7 +10,7 @@ A managed package that syncs Karma Exchange's db with a Salesforce db using the 
 
 ### Test the Unmanaged Package
 
-[1]
+##### [1] Pre-installation steps
 
 a. Install and setup the ["Volunteers for Salesforce"](https://appexchange.salesforce.com/listingDetail?listingId=a0N30000003JBggEAG) managed package. Make sure that the visualforce pages are functional.
 
@@ -21,9 +21,9 @@ b. Contact Karma Exchange Staff to get the following info:
 
 c. Provide the Karma Exchange Staff your salesforce db site url ("Build"->"Develop"->"Sites")
 
-[2]
+##### [2] Package installation
 
-Use this URL to install the package into any organization:
+Use this URL to install the unmanaged package into your salesforce db:
 https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7KJ
 
 Note: If you are installing into a sandbox organization use the following url instead:
@@ -31,9 +31,7 @@ http://test.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7KJ
 
 Default installation settings are fine. Nothing extra needs to be checked or unchecked.
 
-[3]
-
-After installation, enable public access to the rest api: 
+##### [3] Enable public access for Karma Exchange api classes
 
 * "setup" -> "develop->sites"
 * click on the site label "Volunteers"
@@ -45,7 +43,7 @@ After installation, enable public access to the rest api:
   * `KexDebugController`
 * Click "Save"
 
-[4] Configure the Karma Exchange adminstrator settings
+##### [4] Configure the Karma Exchange adminstrator settings for your organization
 
 * "setup" -> "Develop->Custom Settings"
 * Click "manage" next to "Karma Exchange Admin Settings"
@@ -53,16 +51,16 @@ After installation, enable public access to the rest api:
 * Specify the organization id, secret key, and server url from step [1]
 * Click save
 
-This will define the "Default Organization Level Value" for the Karma Exchange administrator settings.
-
-[5] Configure remote sites to add the server url
+##### [5] Add Karma Exchange to the remote sites
 
 * "setup" -> "Administer->Security Controls->Remote Site Settings"
 * click "new remote site"
 * for the "remote site name" specify "KarmaExchange"
 * for the "remote site url" specify the url from step [1]
 
-[5] Define organizers / contacts for each shift. Please verify all contacts have email addreses.
+##### [6] Define organizers / contacts for each shift. 
+
+*Note: Please verify all contacts have email addreses.*
 
 a. We recommend you set an organizer at the org level just in case there isn't one at a lower level.
 
@@ -78,7 +76,7 @@ b. There are a couple other ways to specify a contact (will be explained in deta
 * Volunteer Job.Default Shift Contact
 * Volunteer Shift.Volunteer Shift Contact (add to the volunteer shift page layout)
 
-[6] Modify shift layout to add karma exchange sync button
+##### [7] Modify the shift layout to add a 'Sync with Karma Exchange' button
 
 * Select the "Volunteers" app
 * Go to an existing shift detail
@@ -87,7 +85,7 @@ b. There are a couple other ways to specify a contact (will be explained in deta
 * Drag the "Sync with Karma E..." button to your custom button row
 * Click "Save"
 
-[7] Test out the "Sync with Karma Exchange" button
+##### [8] Test out the "Sync with Karma Exchange" button
 
 a. Enable debug logs for your user and the volunteer guest user
 
@@ -102,13 +100,13 @@ c. Go to Karma Exchange to see if you see the job in the upcoming / past jobs fo
 
 d. Try registering and unregistering and see if the changes are reflected in salesforce.
 
-[8] If Everything is working, try uploading all your upcoming shifts
+##### [9] If Everything is working, try uploading all your upcoming shifts
 
 * Select the "Karma Exchange" app
 * Select the "Karma Exchange Admin" tab
 * Click "Sync All Upcoming Volunteer Shifts"
 
-[9] Enable automatic volunteer shift sync
+##### [10] Enable automatic volunteer shift sync
 
 * Select the "Karma Exchange" app
 * Select the "Karma Exchange Admin" tab
