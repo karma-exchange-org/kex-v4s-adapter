@@ -6,6 +6,10 @@ public with sharing class KexInvalidParamException extends KexTypedException {
         }
     }
 
+    public static KexInvalidParamException create(String paramName) {
+        return new KexInvalidParamException('parameter \'' + paramName + '\' has an invalid value');
+    }
+
     public override KexErrorInfo.ErrorType getErrorType() {
         return KexErrorInfo.ErrorType.INVALID_PARAM;
     }

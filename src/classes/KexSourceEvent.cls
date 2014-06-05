@@ -58,12 +58,12 @@ public with sharing class KexSourceEvent {
                    GW_Volunteers__Desired_Number_of_Volunteers__c,
                    GW_Volunteers__Duration__c,
                    GW_Volunteers__Description__c,
-                   GW_Volunteers__Volunteer_Job__r.Volunteer_Job_Contact__r.FirstName,
-                   GW_Volunteers__Volunteer_Job__r.Volunteer_Job_Contact__r.LastName,
-                   GW_Volunteers__Volunteer_Job__r.Volunteer_Job_Contact__r.Email,
-                   GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Campaign_Contact__r.FirstName,
-                   GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Campaign_Contact__r.LastName,
-                   GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Campaign_Contact__r.Email,
+                   GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.FirstName,
+                   GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.LastName,
+                   GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.Email,
+                   GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.FirstName,
+                   GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.LastName,
+                   GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.Email,
                    LastModifiedDate
                 from GW_Volunteers__Volunteer_Shift__c
                 where Id in :shiftIds];
@@ -174,43 +174,38 @@ public with sharing class KexSourceEvent {
         List<KexSourceParticipant> participants = new List<KexSourceParticipant>();
         List<KexSourceParticipant> others = new List<KexSourceParticipant>();
         KexSourceParticipant primary = null;
-        List<Volunteer_Shift_Contact__c> shiftContacts = [Select Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Is_Primary__c from Volunteer_Shift_Contact__c where Volunteer_Shift__c = : shift.Id];
-        for(Volunteer_Shift_Contact__c shiftContact : shiftContacts)
-        {
-            if(primary==null)
-            {
+        List<Volunteer_Shift_Contact__c> shiftContacts =
+            [Select Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Is_Primary__c
+                from Volunteer_Shift_Contact__c
+                where Volunteer_Shift__c = : shift.Id];
+        for (Volunteer_Shift_Contact__c shiftContact : shiftContacts) {
+            if (primary==null) {
                 primary = toOrganizer(shiftContact.Contact__r.FirstName, shiftContact.Contact__r.LastName, shiftContact.Contact__r.Email);
-            }
-            else if(shiftContact.Is_Primary__c)
-            {
+            } else if (shiftContact.Is_Primary__c) {
                 others.add(primary);
                 primary = toOrganizer(shiftContact.Contact__r.FirstName, shiftContact.Contact__r.LastName, shiftContact.Contact__r.Email);
-            }
-            else
-            {
+            } else {
                 others.add(toOrganizer(shiftContact.Contact__r.FirstName, shiftContact.Contact__r.LastName, shiftContact.Contact__r.Email));
             }
         }
-        if(primary==null&&shift.GW_Volunteers__Volunteer_Job__r.Volunteer_Job_Contact__c!=null)
-        {
+        if ( (primary == null) && shift.GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__c != null) {
             //go to job
-            primary = toOrganizer(shift.GW_Volunteers__Volunteer_Job__r.Volunteer_Job_Contact__r.FirstName,
-                                    shift.GW_Volunteers__Volunteer_Job__r.Volunteer_Job_Contact__r.LastName,
-                                       shift.GW_Volunteers__Volunteer_Job__r.Volunteer_Job_Contact__r.Email);
+            primary = toOrganizer(
+                shift.GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.FirstName,
+                shift.GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.LastName,
+                shift.GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.Email);
         }
-        if(primary==null&&shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Campaign_Contact__c!=null)
-        {
+        if ( (primary == null) && shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__c != null) {
             //go to campaign
-            primary = toOrganizer(shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Campaign_Contact__r.FirstName,
-                                       shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Campaign_Contact__r.LastName,
-                                      shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Campaign_Contact__r.Email);
+            primary = toOrganizer(
+                shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.FirstName,
+                shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.LastName,
+                shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.Email);
         }
-        if(primary==null)
-        {
+        if (primary == null) {
             //go to Org
             List<KarmaExchangeSetting__c> kexs = [select Default_Shift_Contact__r.FirstName,Default_Shift_Contact__r.LastName,Default_Shift_Contact__r.Email from KarmaExchangeSetting__c limit 1];
-            if(kexs.size()>0)
-            {
+            if(kexs.size()>0) {
                 primary = toOrganizer(kexs[0].Default_Shift_Contact__r.FirstName,kexs[0].Default_Shift_Contact__r.LastName,kexs[0].Default_Shift_Contact__r.Email);
             }
         }

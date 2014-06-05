@@ -6,6 +6,7 @@
         <members>KexAuthFailureException</members>
         <members>KexCompactAndSyncPendingShiftsBatch</members>
         <members>KexCompactAndSyncPendingShiftsBatchTest</members>
+        <members>KexDebugController</members>
         <members>KexErrorInfo</members>
         <members>KexInvalidParamException</members>
         <members>KexInvalidParamExceptionTest</members>
