@@ -31,7 +31,9 @@ http://test.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7KJ
 
 Default installation settings are fine. Nothing extra needs to be checked or unchecked.
 
-##### [3] Enable public access for Karma Exchange api classes
+##### [3] Enable public access to enable Karma Exchange to communicate to your db
+
+*Note: All apis only execute if the org secret is validated.*
 
 * "setup" -> "develop->sites"
 * click on the site label "Volunteers"
@@ -76,7 +78,7 @@ b. There are a couple other ways to specify a contact (will be explained in deta
 * Volunteer Job.Default Shift Contact
 * Volunteer Shift.Volunteer Shift Contact (add to the volunteer shift page layout)
 
-##### [7] Modify the shift layout to add a 'Sync with Karma Exchange' button
+##### [7] Modify the shift layout to add the 'Sync with Karma Exchange' button
 
 * Select the "Volunteers" app
 * Go to an existing shift detail
