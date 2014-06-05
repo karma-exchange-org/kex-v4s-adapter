@@ -8,6 +8,114 @@ A managed package that syncs Karma Exchange's db with a Salesforce db using the 
 * v4s app version 3.58
 * v4s source treee: github (need to figure out what the exact commit timestamp of 3.5.8 is). For reference I've cloned commit  [f04f240e8141d0ac7ea4b9ce59f6293360d692ef](https://github.com/davidhabib/Volunteers-for-Salesforce/commit/f04f240e8141d0ac7ea4b9ce59f6293360d692ef) merged on 3/2/14.
 
+### Test the Unmanaged Package
+
+[1]
+
+a. Install and setup the ["Volunteers for Salesforce"](https://appexchange.salesforce.com/listingDetail?listingId=a0N30000003JBggEAG) managed package. Make sure that the visualforce pages are functional.
+
+b. Contact Karma Exchange Staff to get the following info:
+* organization id
+* secretkey
+* serverurl (temporary until launch)
+
+c. Provide the Karma Exchange Staff your salesforce db site url ("Build"->"Develop"->"Sites")
+
+[2]
+
+Use this URL to install the package into any organization:
+https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7KJ
+
+Note: If you are installing into a sandbox organization use the following url instead:
+http://test.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7KJ
+
+Default installation settings are fine. Nothing extra needs to be checked or unchecked.
+
+[3]
+
+After installation, enable public access to the rest api: 
+
+* "setup" -> "develop->sites"
+* click on the site label "Volunteers"
+* click the "Public Access Settings" button
+* scroll to "Enabled Apex Class Access"
+* click "edit"
+* Add the following classes:
+  * `KexRegistrationController`
+  * `KexDebugController`
+* Click "Save"
+
+[4] Configure the Karma Exchange adminstrator settings
+
+* "setup" -> "Develop->Custom Settings"
+* Click "manage" next to "Karma Exchange Admin Settings"
+* Click "new"
+* Specify the organization id, secret key, and server url from step [1]
+* Click save
+
+This will define the "Default Organization Level Value" for the Karma Exchange administrator settings.
+
+[5] Configure remote sites to add the server url
+
+* "setup" -> "Administer->Security Controls->Remote Site Settings"
+* click "new remote site"
+* for the "remote site name" specify "KarmaExchange"
+* for the "remote site url" specify the url from step [1]
+
+[5] Define organizers / contacts for each shift. Please verify all contacts have email addreses.
+
+a. We recommend you set an organizer at the org level just in case there isn't one at a lower level.
+
+* Select the "Karma Exchange" app
+* Select the "Karma Exchange Settings" tab
+* Click new
+* Specify a default shift contact
+* Click save
+
+b. There are a couple other ways to specify a contact (will be explained in detail later).
+
+* Campaign.Default Shift Contact
+* Volunteer Job.Default Shift Contact
+* Volunteer Shift.Volunteer Shift Contact (add to the volunteer shift page layout)
+
+[6] Modify shift layout to add karma exchange sync button
+
+* Select the "Volunteers" app
+* Go to an existing shift detail
+* Click "Edit Layout"
+* Select "Buttons"
+* Drag the "Sync with Karma E..." button to your custom button row
+* Click "Save"
+
+[7] Test out the "Sync with Karma Exchange" button
+
+a. Enable debug logs for your user and the volunteer guest user
+
+* "Monitor -> Logs -> Debug Logs"
+* Click "New" in the "Monitored Users"
+* Select your user, click save
+* Do the same for the "Volunteers Site Guest User"
+
+b. Go to the shift. Click the `Sync with Karma Exchange` button. This will fire a future method which will eventually sync the job with Karma Exchange. You can monitor it in the debug logs.
+
+c. Go to Karma Exchange to see if you see the job in the upcoming / past jobs for your organization.
+
+d. Try registering and unregistering and see if the changes are reflected in salesforce.
+
+[8] If Everything is working, try uploading all your upcoming shifts
+
+* Select the "Karma Exchange" app
+* Select the "Karma Exchange Admin" tab
+* Click "Sync All Upcoming Volunteer Shifts"
+
+[9] Enable automatic volunteer shift sync
+
+* Select the "Karma Exchange" app
+* Select the "Karma Exchange Admin" tab
+* Click "Enable Automatic Volunteer Shift Sync"
+
+Note: if you have a live db then you should always enable this to prevent the tracking table from growing to large. In a future version of the unmanaged package we will only upload entries to the tracking table if automatic shift sync is enabled.
+
 ### Test Salesforce DB setup
 
 Minimum required for testingKarma Exchange and v4s integration:
