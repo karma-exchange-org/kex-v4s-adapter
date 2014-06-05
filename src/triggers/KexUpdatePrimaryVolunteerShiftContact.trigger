@@ -1,21 +1,31 @@
 trigger KexUpdatePrimaryVolunteerShiftContact on Volunteer_Shift_Contact__c (
         before insert, before update) {
 
-    List<Id> shiftIds = new List<Id>();
-    List<Id> vsContacts = new List<Id>();
-    for(Volunteer_Shift_Contact__c node : Trigger.new)
-    {
-        if(node.Is_Primary__c)
-        {
-            shiftIds.add(node.Volunteer_Shift__c);
-            vsContacts.add(node.Id);
+    Map<Id, Volunteer_Shift_Contact__c> primaryShiftContactMap =
+        new Map<Id, Volunteer_Shift_Contact__c>();
+
+    for(Volunteer_Shift_Contact__c shiftContact : Trigger.new) {
+        if (shiftContact.Is_Primary__c) {
+            primaryShiftContactMap.put(
+                shiftContact.Volunteer_Shift__c,
+                shiftContact);
         }
     }
-    List<Volunteer_Shift_Contact__c> toUpdate =
-        [select Id from Volunteer_Shift_Contact__c where Volunteer_Shift__c in : shiftIds and  Id not in :vsContacts limit 10000];
-    for(Volunteer_Shift_Contact__c node : toUpdate)
-    {
-        node.Is_Primary__c = false;
+
+    List<Volunteer_Shift_Contact__c> affectedShiftContacts =
+        [select Id, Volunteer_Shift__c, Is_Primary__c from Volunteer_Shift_Contact__c
+            where Volunteer_Shift__c in :primaryShiftContactMap.keySet() limit 10000];
+    List<Volunteer_Shift_Contact__c> shiftContactsToUpdate =
+        new List<Volunteer_Shift_Contact__c>();
+    for (Volunteer_Shift_Contact__c shiftContact : affectedShiftContacts) {
+        Volunteer_Shift_Contact__c primaryContact =
+            primaryShiftContactMap.get(shiftContact.Volunteer_Shift__c);
+        // If shift contact is no longer the primary contact then we need to
+        // update the is_primary field.
+        if ((primaryContact.id != shiftContact.id) && shiftContact.Is_Primary__c) {
+            shiftContact.Is_Primary__c = false;
+            shiftContactsToUpdate.add(shiftContact);
+        }
     }
-    update toUpdate;
+    update shiftContactsToUpdate;
 }

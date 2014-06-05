@@ -8,8 +8,8 @@ public with sharing class KexErrorInfo {
         OTHER_EXCEPTION
     }
 
-    private String type;
-    private String message;
+    public String type { get; private set; }
+    public String message { get; private set; }
 
     public KexErrorInfo(KexTypedException e) {
         type = e.getErrorType().name();

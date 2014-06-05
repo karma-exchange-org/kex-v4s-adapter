@@ -24,13 +24,13 @@ global with sharing class KexSyncPendingShiftsBatch implements Database.Batchabl
             allShifts.add(sync.Volunteer_Shift__c);
         }
 
-        // Create upsert requests
+        // Create upsert requests for shifts that still exist.
         createUpsertReqs(syncReqs, allShifts);
 
-        // Create deletion requests
+        // Create deletion requests.
         Set<Id> deletionShifts = new Set<Id>(allShifts);
         for(KexSyncRequest ksr : syncReqs) {
-            deletionShifts.remove(ksr.sourceEventId);
+            deletionShifts.remove(ksr.sourceEvent.sourceEventId);
         }
         createDeletionReqs(syncReqs, deletionShifts);
 
@@ -41,7 +41,7 @@ global with sharing class KexSyncPendingShiftsBatch implements Database.Batchabl
         List<KexSourceEvent> sourceEvents = KexSourceEvent.toEvents(new List<Id>(shifts));
         for(KexSourceEvent ke : sourceEvents) {
             syncReqs.add(
-                new KexSyncRequest(KexSyncRequest.ACTION_UPSERT, ke.sourceEventId, ke));
+                new KexSyncRequest(KexSyncRequest.ACTION_UPSERT, ke));
         }
     }
 

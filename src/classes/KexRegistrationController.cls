@@ -22,8 +22,7 @@ global with sharing class KexRegistrationController {
                 new KexErrorInfo(e));
         }
 
-        String shiftId = eventId;
-        KexSourceEvent event;
+        Id shiftId = eventId;
         try {
             execute(action, shiftId, firstName, lastName, email);
             // Return the updated shift information.
@@ -35,7 +34,7 @@ global with sharing class KexRegistrationController {
         }
     }
 
-    private static void execute(String action, String shiftId,
+    private static void execute(String action, Id shiftId,
            String firstName, String lastName, String email) {
         System.debug('Processing signup request:' +
           'action=' + action + ', ' +
@@ -72,7 +71,8 @@ global with sharing class KexRegistrationController {
         // Prevent duplicate signups
         if ( action.equals(RegistrationAction.REGISTER.name()) ) {
             if (hoursQuery.isEmpty() || (hoursQuery[0].GW_Volunteers__Status__c != 'Confirmed')) {
-                if (shift.GW_Volunteers__Number_of_Volunteers_Still_Needed__c == 0) {
+                if ( (shift.GW_Volunteers__Number_of_Volunteers_Still_Needed__c == null) ||
+                     (shift.GW_Volunteers__Number_of_Volunteers_Still_Needed__c.intValue() == 0) ) {
                     throw new KexRegistrationLimitReachedException();
                 }
 
@@ -132,8 +132,8 @@ global with sharing class KexRegistrationController {
     }
 
     global class RegistrationResponse {
-        KexSourceEvent sourceEvent;
-        KexErrorInfo error;
+        public KexSourceEvent sourceEvent;
+        public KexErrorInfo error;
 
         public RegistrationResponse(KexSourceEvent sourceEvent) {
             this(sourceEvent, null);

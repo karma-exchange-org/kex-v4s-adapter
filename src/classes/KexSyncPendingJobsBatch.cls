@@ -7,12 +7,12 @@ global with sharing class KexSyncPendingJobsBatch implements Database.Batchable<
     }
 
     global Database.QueryLocator start(Database.BatchableContext bc) {
-        // Limiting job query to 10,000 ids because in one hours no single
+        // Limiting job query to 10,000 ids because in one hour no single
         // volunteer db will have 10,000 job updates.
-        syncList = [SELECT CreatedDate,Id,Volunteer_Job__c FROM KexSyncTracker__c  where Volunteer_Job__c!=null order by CreatedDate asc limit 10000];
+        syncList = [SELECT CreatedDate,Id,Volunteer_Job__c FROM KexSyncTracker__c
+            where Volunteer_Job__c!=null order by CreatedDate asc limit 10000];
         Set<Id> jobs = new Set<Id>();
-        for(KexSyncTracker__c sync : syncList)
-        {
+        for(KexSyncTracker__c sync : syncList) {
             jobs.add(sync.Volunteer_Job__c);
         }
 
@@ -22,11 +22,10 @@ global with sharing class KexSyncPendingJobsBatch implements Database.Batchable<
 
     global void execute(Database.BatchableContext BC, List<GW_Volunteers__Volunteer_Shift__c> jobShifts){
         List<KexSyncTracker__c> shiftList = new List<KexSyncTracker__c>();
-        for(GW_Volunteers__Volunteer_Shift__c shift : jobShifts)
-        {
-                KexSyncTracker__c sync = new KexSyncTracker__c();
-                sync.Volunteer_Shift__c = shift.Id;
-                shiftList.add(sync);
+        for(GW_Volunteers__Volunteer_Shift__c shift : jobShifts) {
+            KexSyncTracker__c sync = new KexSyncTracker__c();
+            sync.Volunteer_Shift__c = shift.Id;
+            shiftList.add(sync);
         }
         insert shiftList;
     }

@@ -1,5 +1,9 @@
 public with sharing class KexSyncRequest {
 
+    // Required to workaround the inability to invoke callouts from batch jobs in tests:
+    //   https://developer.salesforce.com/forums/ForumsMain?id=906F00000009mDbIAI
+    public static KexSyncHttpCalloutMock calloutMock;
+
     public static final String ACTION_UPSERT = 'UPSERT';
     public static final String ACTION_DELETE = 'DELETE';
 
@@ -7,9 +11,9 @@ public with sharing class KexSyncRequest {
     private static final String ORG_ID = Karma_Exchange_Admin_Settings__c.getInstance().OrganizationId__c;
     private static final String ORG_SECRET = Karma_Exchange_Admin_Settings__c.getInstance().SecretKey__c;
 
-    private static final String PATH_DERIVED_EVENT_SYNC = '/api/derived/event';
-    private static final String PARAM_ORG_ID = 'org_id';
-    private static final String PARAM_ORG_SECRET = 'org_secret';
+    public static final String PATH_DERIVED_EVENT_SYNC = '/api/derived/event';
+    public static final String PARAM_ORG_ID = 'org_id';
+    public static final String PARAM_ORG_SECRET = 'org_secret';
 
     public String action;
     public String sourceEventId;
@@ -19,7 +23,11 @@ public with sharing class KexSyncRequest {
         this(action, sourceEventId, null);
     }
 
-    public KexSyncRequest(String action, String sourceEventId, KexSourceEvent sourceEvent) {
+    public KexSyncRequest(String action, KexSourceEvent sourceEvent) {
+        this(action, null, sourceEvent);
+    }
+
+    private KexSyncRequest(String action, String sourceEventId, KexSourceEvent sourceEvent) {
         this.action = action;
         this.sourceEventId = sourceEventId;
         this.sourceEvent = sourceEvent;
@@ -50,7 +58,12 @@ public with sharing class KexSyncRequest {
         // Make callout
         Http http = new Http();
 
-        HTTPResponse res = http.send(req);
+        HTTPResponse res;
+        if (calloutMock == null) {
+            res = http.send(req);
+        } else {
+            res = calloutMock.respond(req);
+        }
 
         System.debug('KexSyncRequest: response:' + res);
         System.debug('KexSyncRequest: response body:' + res.getBody());
