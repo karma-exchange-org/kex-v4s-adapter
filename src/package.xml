@@ -7,6 +7,7 @@
         <members>KexCompactAndSyncPendingShiftsBatch</members>
         <members>KexCompactAndSyncPendingShiftsBatchTest</members>
         <members>KexDebugController</members>
+        <members>KexDebugControllerTest</members>
         <members>KexErrorInfo</members>
         <members>KexInvalidParamException</members>
         <members>KexInvalidParamExceptionTest</members>
@@ -14,6 +15,7 @@
         <members>KexRegistrationController</members>
         <members>KexRegistrationControllerTest</members>
         <members>KexRegistrationLimitReachedException</members>
+        <members>KexRestServiceResponse</members>
         <members>KexSourceEvent</members>
         <members>KexSourceEventTest</members>
         <members>KexSourceParticipant</members>

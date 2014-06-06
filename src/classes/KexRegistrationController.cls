@@ -4,7 +4,7 @@ global with sharing class KexRegistrationController {
     private static final String ORG_SECRET = Karma_Exchange_Admin_Settings__c.getInstance().SecretKey__c;
 
     @HttpPost
-    global static RegistrationResponse doPost(String action, String eventId,
+    global static KexRestServiceResponse doPost(String action, String eventId,
            String firstName, String lastName, String email, String secretKey) {
 
         try {
@@ -18,7 +18,7 @@ global with sharing class KexRegistrationController {
                 throw new KexAuthFailureException();
             }
         } catch (KexTypedException e) {
-            return new RegistrationResponse(
+            return new KexRestServiceResponse(
                 new KexErrorInfo(e));
         }
 
@@ -26,11 +26,11 @@ global with sharing class KexRegistrationController {
         try {
             execute(action, shiftId, firstName, lastName, email);
             // Return the updated shift information.
-            return new RegistrationResponse(KexSourceEvent.toEvent(shiftId));
+            return new KexRestServiceResponse(KexSourceEvent.toEvent(shiftId));
         } catch (KexTypedException e) {
-            return new RegistrationResponse(KexSourceEvent.toEvent(shiftId), new KexErrorInfo(e));
+            return new KexRestServiceResponse(KexSourceEvent.toEvent(shiftId), new KexErrorInfo(e));
         } catch (Exception e) {
-            return new RegistrationResponse(KexSourceEvent.toEvent(shiftId), new KexErrorInfo(e));
+            return new KexRestServiceResponse(KexSourceEvent.toEvent(shiftId), new KexErrorInfo(e));
         }
     }
 
@@ -131,21 +131,4 @@ global with sharing class KexRegistrationController {
         UNREGISTER
     }
 
-    global class RegistrationResponse {
-        public KexSourceEvent sourceEvent;
-        public KexErrorInfo error;
-
-        public RegistrationResponse(KexSourceEvent sourceEvent) {
-            this(sourceEvent, null);
-        }
-
-        public RegistrationResponse(KexErrorInfo error) {
-            this(null, error);
-        }
-
-        public RegistrationResponse(KexSourceEvent sourceEvent, KexErrorInfo error) {
-            this.sourceEvent = sourceEvent;
-            this.error = error;
-        }
-    }
  }
