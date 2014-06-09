@@ -14,12 +14,12 @@ A managed package that syncs Karma Exchange's db with a Salesforce db using the 
 
 a. Install and setup the ["Volunteers for Salesforce"](https://appexchange.salesforce.com/listingDetail?listingId=a0N30000003JBggEAG) managed package. Make sure that the visualforce pages are functional.
 
-b. Contact Karma Exchange Staff to get the following info:
+b. Contact Karma Exchange staff to get the following info:
 * organization id
 * secretkey
 * serverurl (temporary until launch)
 
-c. Provide the Karma Exchange Staff your salesforce db site url ("Build"->"Develop"->"Sites")
+c. Provide the Karma Exchange staff your salesforce db site url ("Build"->"Develop"->"Sites")
 
 ##### [2] Package installation
 
@@ -123,7 +123,7 @@ To help prevent geo-coding errors for Volunteer Jobs, Karma Exchange includes a 
 * Go to the detail page of a Volunteer Job
 * Click "Edit Layout"
 * Select "Visualforce Pages"
-* Drag "Volunteer Job Map" below the "Location information" section
+* Drag the "Volunteer Job Map" VF page to wherever you'd like to see it. We recommend putting it below the "Location information" field.
 * Double click on the newly dragged item.
 * Set the height to 500px.
 * Click "OK"
