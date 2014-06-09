@@ -12,7 +12,7 @@ A managed package that syncs Karma Exchange's db with a Salesforce db using the 
 
 ##### [1] Pre-installation steps
 
-a. Install and setup the ["Volunteers for Salesforce"](https://appexchange.salesforce.com/listingDetail?listingId=a0N30000003JBggEAG) managed package. Make sure that the visualforce pages are functional.
+a. Install and setup the ["Volunteers for Salesforce"](https://appexchange.salesforce.com/listingDetail?listingId=a0N30000003JBggEAG) (V4S) managed package. Make sure that the V4S visualforce pages are working.
 
 b. Contact Karma Exchange staff to get the following info:
 * organization id
