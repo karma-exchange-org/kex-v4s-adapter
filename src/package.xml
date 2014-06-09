@@ -36,6 +36,7 @@
     </types>
     <types>
         <members>KexAdmin</members>
+        <members>KexVolunteerJobMap</members>
         <name>ApexPage</name>
     </types>
     <types>
