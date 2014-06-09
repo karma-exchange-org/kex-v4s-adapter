@@ -116,6 +116,19 @@ d. Try registering and unregistering and see if the changes are reflected in sal
 
 Note: if you have a live db then you should always enable this to prevent the tracking table from growing too large. In a future version of the unmanaged package we will only upload entries to the tracking table if automatic shift sync is enabled.
 
+##### [11] Display a map of the Volunteer Job location
+
+To help prevent geo-coding errors for Volunteer Jobs, Karma Exchange includes a visual force page to display the job location.
+
+* Go to the detail page of a Volunteer Job
+* Click "Edit Layout"
+* Select "Visualforce Pages"
+* Drag "Volunteer Job Map" below the "Location information" section
+* Double click on the newly dragged item.
+* Set the height to 500px.
+* Click "OK"
+* Click "Save"
+
 ### Test Salesforce DB setup
 
 Minimum required for testingKarma Exchange and v4s integration:
