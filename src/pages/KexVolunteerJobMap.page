@@ -62,15 +62,21 @@
           }
 
         } else {
-          $('#map').css({'height' : '15px'});
-          $('#map').html("Oops! {!GW_Volunteers__Volunteer_Job__c.Name}'s address '" +
-              + address + "' could not be found, please make sure the address is correct.");
-          resizeIframe();
+          $('#map').hide();
+          $('#msg').css({'display' : 'table'});
+          var msg;
+          if (address) {
+              $('#msg').addClass('error');
+              msg = "Address <b>'" + address + "'</b> could not be found, please make sure the address is correct.";
+          } else {
+              $('#msg').addClass('request');
+              msg = "Location not specified. Please specify a location to enable volunteers to search for nearby volunteer opportunities.";
+          }
+          $('#msg').html(msg);
         }
       });
 
       function addAddressComponent(addr, addrComp) {
-        console.log("Addr: addr='%s', comp='%s'", addr, addrComp);
         if (addrComp) {
           if (addr) {
             addr += ", ";
@@ -80,34 +86,47 @@
         return addr;
       }
 
-      function resizeIframe() {
-        var me = window.name;
-        if (me) {
-          var iframes = parent.document.getElementsByName(me);
-          if (iframes && iframes.length == 1) {
-            height = document.body.offsetHeight;
-            iframes[0].style.height = height + "px";
-          }
-        }
-      }
-
     });
     </script>
 
     <style>
+
     #map {
       font-family: Arial;
       font-size:12px;
       line-height:normal !important;
-      height:490px;
+      width: 100%;
+      height: 290px;
       background:transparent;
     }
+
+    #msg {
+      border: 1px solid transparent;
+      border-radius: 4px;
+      padding: 10px;
+      margin: 140px auto;
+      display: none;
+    }
+
+    #msg.error {
+      background-color: #f2dede;
+      border-color: #ebccd1;
+      color: #a94442;
+    }
+
+    #msg.request {
+      background-color: #d9edf7;
+      border-color: #bce8f1;
+      color: #31708f;
+    }
+
     </style>
 
 </head>
 
 <body>
     <div id="map"></div>
+    <div id="msg"></div>
 </body>
 
 </apex:pageBlock>

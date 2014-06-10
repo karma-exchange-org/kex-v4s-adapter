@@ -8,8 +8,9 @@ public class KexTestDataFactory {
 
     public static final Integer MAX_SHIFT_VOLUNTEERS = 4;
 
+    public final Id campaignId;
+
     private final Id accountId;
-    private final Id campaignId;
     private Integer contactCount = 0;
     private Integer jobCount = 0;
 

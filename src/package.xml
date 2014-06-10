@@ -3,6 +3,7 @@
     <types>
         <members>KexAdminController</members>
         <members>KexAdminControllerTest</members>
+        <members>KexAssociatedOrg</members>
         <members>KexAuthFailureException</members>
         <members>KexCompactAndSyncPendingShiftsBatch</members>
         <members>KexCompactAndSyncPendingShiftsBatchTest</members>
