@@ -24,10 +24,10 @@ c. Provide the Karma Exchange staff your salesforce db site url ("Build"->"Devel
 ##### [2] Package installation
 
 Use this URL to install the unmanaged package into your salesforce db:
-https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7LR
+https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7OL
 
 Note: If you are installing into a sandbox organization use the following url instead:
-http://test.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7LR
+http://test.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7OL
 
 Default installation settings are fine. Nothing extra needs to be checked or unchecked.
 
@@ -125,9 +125,15 @@ To help prevent geo-coding errors for Volunteer Jobs, Karma Exchange includes a 
 * Select "Visualforce Pages"
 * Drag the "Volunteer Job Map" VF page to wherever you'd like to see it. We recommend putting it below the "Location information" field.
 * Double click on the newly dragged item.
-* Set the height to 500px.
+* Set the height to 300px.
 * Click "OK"
 * Click "Save"
+
+##### [12] Other new fields
+
+* Campaign."Sponsoring Org for Volunteer Jobs" - specifies the organization that is actually sponsoring / running the volunteer jobs under this campaign.
+* "Volunteer Job"."External Registration Url" - URL of site to signup to volunteer for the job. If this field is specified, volunteer registration will not be managed by Karma Exchange.
+* "Volunteer Job"."External Registration Details" - Details (phone number, email, etc.) on how to register for the volunteer job. If this field is specified, volunteer registration will not be managed by Karma Exchange.
 
 ### Test Salesforce DB setup
 
