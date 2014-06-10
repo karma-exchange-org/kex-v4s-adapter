@@ -25,8 +25,26 @@ private class KexSourceEventTest {
                        (organizers[1].user.email.equalsIgnoreCase(contact2.email)),
                        'organizers[1] != contact2 (): organizers[0]=' + organizers[1] +
                        ' contact2=' + contact2);
-
+        System.assert(null == kexEvent.sourceAssociatedOrg);
         // TODO(avaliani): validate conversion
+    }
+
+    static testMethod void testToEventAssociatedOrg() {
+        KexTestDataFactory testDataFactory = new KexTestDataFactory();
+        GW_Volunteers__Volunteer_Shift__c shift
+            = testDataFactory.createShift();
+
+        Account acc = new Account(name='Associated Volunteer Org');
+        insert acc;
+        Campaign cmp = new Campaign(id=testDataFactory.campaignId);
+        cmp.Volunteer_Job_Sponsor__c = acc.id;
+        update cmp;
+
+        KexSourceEvent kexEvent = KexSourceEvent.toEvent(shift.id);
+        System.assert(kexEvent != null);
+        KexAssociatedOrg assocOrg = kexEvent.sourceAssociatedOrg;
+        System.assert((assocOrg != null) && (assocOrg.name == 'Associated Volunteer Org'),
+            'Associated org does not match: ' + assocOrg);
     }
 
     private static List<KexSourceParticipant> getOrganizers(KexSourceEvent kexEvent) {
