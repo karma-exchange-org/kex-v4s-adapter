@@ -1,4 +1,4 @@
-global with sharing class KexSyncPendingJobsBatch implements Database.Batchable<sObject>, Database.Stateful, Schedulable {
+global without sharing class KexSyncPendingJobsBatch implements Database.Batchable<sObject>, Database.Stateful, Schedulable {
 
     private List<KexSyncTracker__c> syncList;
 

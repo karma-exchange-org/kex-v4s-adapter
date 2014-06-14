@@ -1,5 +1,5 @@
 @RestResource(urlMapping='/kex-debug/*')
-global with sharing class KexDebugController {
+global without sharing class KexDebugController {
 
     private static final String ORG_SECRET = Karma_Exchange_Admin_Settings__c.getInstance().SecretKey__c;
 
@@ -17,6 +17,9 @@ global with sharing class KexDebugController {
                 KexInvalidParamException.notNull('shiftId', shiftId);
                 KexAdminController.syncShiftFuture(shiftId);
                 return new KexRestServiceResponse(KexSourceEvent.toEvent(shiftId));
+            } else if (DebugAction.SYNC_UPCOMING.name().equals(action)) {
+                KexAdminController.syncUpcomingShifts();
+                return new KexRestServiceResponse();
             } else {
                 throw KexInvalidParamException.create('action');
             }
@@ -29,7 +32,8 @@ global with sharing class KexDebugController {
     }
 
     private enum DebugAction {
-        SYNC
+        SYNC,
+        SYNC_UPCOMING
     }
 
 }

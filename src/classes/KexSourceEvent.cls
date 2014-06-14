@@ -1,4 +1,4 @@
-public with sharing class KexSourceEvent {
+public without sharing class KexSourceEvent {
 
     private static final String VH_STATUS_CONFIRMED = 'Confirmed';
     private static final String VH_STATUS_WEB_SIGN_UP = 'Web Sign Up';
@@ -12,6 +12,8 @@ public with sharing class KexSourceEvent {
 
     public String title;
     public String descriptionHtml;
+    public String shiftDescription;
+
     public Location location;
     public String locationInformationHtml;
     public long startTime;
@@ -23,7 +25,7 @@ public with sharing class KexSourceEvent {
     public class Location {
         public String title;
         public String description;
-        public Address address = new Address();
+        public Address address;
     }
 
     public class Address {
@@ -32,12 +34,17 @@ public with sharing class KexSourceEvent {
         public String state;
         public String country;
         public String zip;
-        public GeoPoint geoPt = null;
+        public GeoPoint geoPt;
     }
 
     public class GeoPoint {
         public Decimal latitude;
         public Decimal longitude;
+
+        public GeoPoint(Decimal latitude, Decimal longitude) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
     }
 
     public static KexSourceEvent toEvent(Id shiftId) {
@@ -58,6 +65,8 @@ public with sharing class KexSourceEvent {
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Location_City__c,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Location__c,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Location_Zip_Postal_Code__c,
+                   GW_Volunteers__Volunteer_Job__r.Location_Coordinates__Latitude__s,
+                   GW_Volunteers__Volunteer_Job__r.Location_Coordinates__Longitude__s,
                    GW_Volunteers__Volunteer_Job__r.External_Registration_Url__c,
                    GW_Volunteers__Volunteer_Job__r.External_Registration_Details__c,
                    GW_Volunteers__Start_Date_Time__c,
@@ -71,12 +80,14 @@ public with sharing class KexSourceEvent {
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.LastName,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.Email,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Name,
+                   GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Karma_Exchange_Org_Id__c,
                    LastModifiedDate
                 from GW_Volunteers__Volunteer_Shift__c
                 where Id in :shiftIds];
 
         for(GW_Volunteers__Volunteer_Shift__c shift : shiftQuery) {
-            GW_Volunteers__Volunteer_Job__c job = shift.GW_Volunteers__Volunteer_Job__r;
+            GW_Volunteers__Volunteer_Job__c job =
+                shift.GW_Volunteers__Volunteer_Job__r;
 
             KexSourceEvent event = new KexSourceEvent();
             event.sourceEventId = shift.Id;
@@ -84,6 +95,7 @@ public with sharing class KexSourceEvent {
 
             event.title = job.Name;
             event.descriptionHtml = job.GW_Volunteers__Description__c;
+            event.shiftDescription = shift.GW_Volunteers__Description__c;
             event.locationInformationHtml = job.GW_Volunteers__Location_Information__c;
             event.externalRegistrationUrl = job.External_Registration_Url__c;
             event.externalRegistrationDetailsHtml = job.External_Registration_Details__c;
@@ -93,18 +105,29 @@ public with sharing class KexSourceEvent {
             if ((job.GW_Volunteers__Location_Street__c != null) ||
                 (job.GW_Volunteers__Location_City__c != null) ||
                 (job.GW_Volunteers__Location__c != null) ||
-                (job.GW_Volunteers__Location_Zip_Postal_Code__c != null)) {
+                (job.GW_Volunteers__Location_Zip_Postal_Code__c != null) ||
+                ( (job.Location_Coordinates__Latitude__s != null) &&
+                  (job.Location_Coordinates__Longitude__s != null) )  ) {
 
                 event.location = new Location();
-                event.location.address.street =
+                Address addr = event.location.address = new Address();
+
+                addr.street =
                     job.GW_Volunteers__Location_Street__c;
-                event.location.address.city =
+                addr.city =
                     job.GW_Volunteers__Location_City__c;
-                event.location.address.state =
+                addr.state =
                     job.GW_Volunteers__Location__c;
-                event.location.address.zip =
+                addr.zip =
                     job.GW_Volunteers__Location_Zip_Postal_Code__c;
-                event.location.address.country = 'USA';
+                addr.country = 'USA';
+                if ( (job.Location_Coordinates__Latitude__s != null) &&
+                     (job.Location_Coordinates__Longitude__s != null) ) {
+                    addr.geoPt = new GeoPoint(
+                        job.Location_Coordinates__Latitude__s,
+                        job.Location_Coordinates__Longitude__s);
+                }
+
             }
 
             event.startTime = shift.GW_Volunteers__Start_Date_Time__c.getTime();
@@ -118,10 +141,11 @@ public with sharing class KexSourceEvent {
                 shift.GW_Volunteers__Desired_Number_of_Volunteers__c.intValue() :
                 0;
 
-            if (shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__c != null) {
+            if (job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__c != null) {
                 event.sourceAssociatedOrg = new KexAssociatedOrg(
-                    shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Name,
-                    KexAssociatedOrg.AssociatedOrgType.EVENT_SPONSOR);
+                    job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Karma_Exchange_Org_Id__c,
+                    job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Name,
+                    KexAssociatedOrg.OrgAssociation.EVENT_SPONSOR);
             }
 
             event.setParticipants(shift);

@@ -1,4 +1,4 @@
-global with sharing class KexCompactAndSyncPendingShiftsBatch implements Database.Batchable<sObject>, Database.Stateful {
+global without sharing class KexCompactAndSyncPendingShiftsBatch implements Database.Batchable<sObject>, Database.Stateful {
 
     private Id lastShiftProcessed;
 

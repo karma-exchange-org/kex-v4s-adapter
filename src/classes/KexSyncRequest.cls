@@ -1,4 +1,4 @@
-public with sharing class KexSyncRequest {
+public without sharing class KexSyncRequest {
 
     // Required to workaround the inability to invoke callouts from batch jobs in tests:
     //   https://developer.salesforce.com/forums/ForumsMain?id=906F00000009mDbIAI
