@@ -26,7 +26,7 @@ global class KexAdminController {
 
     public static void enableAutoSync() {
         // Schedule every hour (cron expression)
-        String jobID = System.schedule('Karma Exchange Auto Sync Job',
+        String jobID = System.schedule('Karma Exchange Volunteer Shift Sync',
             '0 0 * * * ?',
             new KexSyncPendingJobsBatch());
     }

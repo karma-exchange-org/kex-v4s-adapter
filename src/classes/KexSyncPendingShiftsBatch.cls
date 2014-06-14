@@ -1,4 +1,4 @@
-global with sharing class KexSyncPendingShiftsBatch implements Database.Batchable<sObject>, Database.Stateful,Database.AllowsCallouts{
+global without sharing class KexSyncPendingShiftsBatch implements Database.Batchable<sObject>, Database.Stateful,Database.AllowsCallouts{
 
     // This number was chosen as a safe number of shifts to process in the app engine
     // timeout of 60 seconds. We can probably bump this number to at least 60 if not

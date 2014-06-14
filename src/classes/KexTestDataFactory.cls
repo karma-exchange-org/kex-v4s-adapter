@@ -6,6 +6,11 @@ public class KexTestDataFactory {
     public static final String KEX_ORG_ID = 'KexTestOrgId';
     public static final String KEX_SERVER_URL = 'https://kex.server.org';
 
+    public static final String JOB_LOCATION_STREET = '1931 Center Street';
+    public static final String JOB_LOCATION_CITY = 'Berkeley';
+    public static final String JOB_LOCATION_STATE = 'CA';
+    public static final String JOB_ZIP_POSTAL_CODE = '94704';
+
     public static final Integer MAX_SHIFT_VOLUNTEERS = 4;
 
     public final Id campaignId;
@@ -56,10 +61,10 @@ public class KexTestDataFactory {
         GW_Volunteers__Volunteer_Job__c job = new GW_Volunteers__Volunteer_Job__c(
             name='TestJob' + jobCount,
             GW_Volunteers__Campaign__c = campaignId,
-            GW_Volunteers__Location_Street__c = '1931 Center Street ',
-            GW_Volunteers__Location_City__c = 'Berkeley',
-            GW_Volunteers__Location__c = 'CA',
-            GW_Volunteers__Location_Zip_Postal_Code__c = '94704');
+            GW_Volunteers__Location_Street__c = JOB_LOCATION_STREET,
+            GW_Volunteers__Location_City__c = JOB_LOCATION_CITY,
+            GW_Volunteers__Location__c = JOB_LOCATION_STATE,
+            GW_Volunteers__Location_Zip_Postal_Code__c = JOB_ZIP_POSTAL_CODE);
         insert job;
         GW_Volunteers__Volunteer_Shift__c shift = new GW_Volunteers__Volunteer_Shift__c(
             GW_Volunteers__Volunteer_Job__c = job.Id,

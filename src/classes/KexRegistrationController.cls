@@ -1,5 +1,5 @@
 @RestResource(urlMapping='/registration/*')
-global with sharing class KexRegistrationController {
+global without sharing class KexRegistrationController {
 
     private static final String ORG_SECRET = Karma_Exchange_Admin_Settings__c.getInstance().SecretKey__c;
 
