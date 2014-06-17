@@ -117,7 +117,10 @@ private class KexSourceEventTest {
         GW_Volunteers__Volunteer_Shift__c shift
             = testDataFactory.createShift();
 
-        Account acc = new Account(name='Associated Volunteer Org', Karma_Exchange_Org_Id__c='StewardshipNetwork');
+        Account acc = new Account(
+            name='Associated Volunteer Org',
+            Karma_Exchange_Org_Id__c='StewardshipNetwork',
+            Karma_Exchange_Org_Secret_Key__c='FakeKey');
         insert acc;
         Campaign cmp = new Campaign(id=testDataFactory.campaignId);
         cmp.Volunteer_Job_Sponsor__c = acc.id;
@@ -127,7 +130,8 @@ private class KexSourceEventTest {
         System.assert(kexEvent != null);
         KexAssociatedOrg assocOrg = kexEvent.sourceAssociatedOrg;
         System.assert((assocOrg != null) && assocOrg.name.equals('Associated Volunteer Org') &&
-            assocOrg.orgId.equals('StewardshipNetwork'), 'Associated org does not match: ' + assocOrg);
+            assocOrg.orgId.equals('StewardshipNetwork') && assocOrg.secretKey.equals('FakeKey'),
+            'Associated org does not match: ' + assocOrg);
     }
 
     private static List<KexSourceParticipant> getOrganizers(KexSourceEvent kexEvent) {

@@ -81,6 +81,7 @@ public without sharing class KexSourceEvent {
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.Email,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Name,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Karma_Exchange_Org_Id__c,
+                   GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Karma_Exchange_Org_Secret_Key__c,
                    LastModifiedDate
                 from GW_Volunteers__Volunteer_Shift__c
                 where Id in :shiftIds];
@@ -143,8 +144,9 @@ public without sharing class KexSourceEvent {
 
             if (job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__c != null) {
                 event.sourceAssociatedOrg = new KexAssociatedOrg(
-                    job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Karma_Exchange_Org_Id__c,
                     job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Name,
+                    job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Karma_Exchange_Org_Id__c,
+                    job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Karma_Exchange_Org_Secret_Key__c,
                     KexAssociatedOrg.OrgAssociation.EVENT_SPONSOR);
             }
 

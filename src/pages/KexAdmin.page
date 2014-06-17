@@ -1,19 +1,14 @@
 <apex:page cache="true" controller="KexAdminController" title="Karma Exchange Admin Console">
-    <script>
-        function displayMsg(msg) {
-            alert(msg);
-        }
-    </script>
     <apex:form >
         <p>
             <apex:commandButton action="{!syncUpcomingShifts}"
                 value="Sync All Upcoming Volunteer Shifts"
-                onComplete="displayMsg('Sync initiated. Please monitor apex jobs for completion.')" />
+                onComplete="alert('Sync initiated. Please monitor apex jobs for completion.')" />
         </p>
         <p>
             <apex:commandButton action="{!enableAutoSync}"
                 value=" Enable Automatic Volunteer Shift Sync "
-                onComplete="displayMsg('Automatic shift sync enabled.')" />
+                onComplete="alert('Automatic shift sync enabled.')" />
         </p>
     </apex:form>
 </apex:page>
