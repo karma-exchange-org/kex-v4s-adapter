@@ -24,10 +24,10 @@ c. Provide the Karma Exchange staff your salesforce db site url ("Build"->"Devel
 ##### [2] Package installation
 
 Use this URL to install the unmanaged package into your salesforce db:
-https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7OL
+https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7Q2
 
 Note: If you are installing into a sandbox organization use the following url instead:
-http://test.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7OL
+http://test.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7Q2
 
 Default installation settings are fine. Nothing extra needs to be checked or unchecked.
 
