@@ -3,13 +3,15 @@ public with sharing class KexAssociatedOrg {
         EVENT_SPONSOR
     }
 
-    public String orgId;
     public String name;
+    public String orgId;
+    public String secretKey;
     public String association;
 
-    public KexAssociatedOrg(String orgId, String name, OrgAssociation association) {
-        this.orgId = orgId;
+    public KexAssociatedOrg(String name, String orgId, String secretKey, OrgAssociation association) {
         this.name = name;
+        this.orgId = orgId;
+        this.secretKey = secretKey;
         this.association = association.name();
     }
 }
