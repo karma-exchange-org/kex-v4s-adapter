@@ -129,11 +129,15 @@ To help prevent geo-coding errors for Volunteer Jobs, Karma Exchange includes a 
 * Click "OK"
 * Click "Save"
 
-##### [12] Other new fields
+##### [12] Summary of new fields
 
-* Campaign."Sponsoring Org for Volunteer Jobs" - specifies the organization that is actually sponsoring / running the volunteer jobs under this campaign.
-* "Volunteer Job"."External Registration Url" - URL of site to signup to volunteer for the job. If this field is specified, volunteer registration will not be managed by Karma Exchange.
-* "Volunteer Job"."External Registration Details" - Details (phone number, email, etc.) on how to register for the volunteer job. If this field is specified, volunteer registration will not be managed by Karma Exchange.
+* Sponsoring Org Fields
+  * Campaign."Sponsoring Org for Volunteer Jobs" - specifies the organization that is actually sponsoring / running the volunteer jobs under this campaign.
+  * Account."Karma Exchange Org Id" - specifies the org id for the sponsoring org. Only use this for orgs that are registered with Karma Exchange. If this is not specified then the sponsoring org will show up in Karma Exchange with the logo of the salesforce db org.
+  * Account."Karma Exchange Org Secret Key" - specifies the org secret key for the sponsoring org. This must be specified if Account."Karma Exchange Org Id" is non-null. This prevents one org from accidentally impersonating another org.
+* External Registration Fields
+  * "Volunteer Job"."External Registration Url" - URL of site to signup to volunteer for the job. If this field is specified, volunteer registration will not be managed by Karma Exchange.
+  * "Volunteer Job"."External Registration Details" - Details (phone number, email, etc.) on how to register for the volunteer job. If this field is specified, volunteer registration will not be managed by Karma Exchange.
 
 ### Test Salesforce DB setup
 
