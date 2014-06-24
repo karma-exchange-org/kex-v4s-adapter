@@ -70,7 +70,9 @@ public without sharing class KexSyncRequest {
 
         // Note: in addition to the SyncFailureException a CalloutException can be thrown by Apex.
         if (!reqSuccessful(res)) {
-            throw new KexSyncFailureException('Http request to Karma Exchange failed: ' + res.toString());
+            throw new KexSyncFailureException(
+            'Http request to Karma Exchange failed: status=\'' + res.getStatusCode() + '\'' +
+            ' response=\'' + res.getBody() + '\'');
         }
     }
 
