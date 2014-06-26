@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Default_Shift_Contact__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Default Shift Contact</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Default Shift Contact Volunteer Jobs</relationshipLabel>
+        <relationshipName>Default_Shift_Contact_Volunteer_Jobs</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>External_Registration_Details__c</fullName>
+        <description>Details (phone number, email, etc.)  on how to register for the volunteer job. If this field is specified, volunteer registration will not be managed by Karma Exchange.</description>
+        <externalId>false</externalId>
+        <label>External Registration Details</label>
+        <length>32768</length>
+        <trackTrending>false</trackTrending>
+        <type>Html</type>
+        <visibleLines>10</visibleLines>
+    </fields>
+    <fields>
+        <fullName>External_Registration_Url__c</fullName>
+        <description>URL of site to signup to volunteer for the job. If this field is specified, volunteer registration will not be managed by Karma Exchange.</description>
+        <externalId>false</externalId>
+        <label>External Registration Url</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Url</type>
+    </fields>
+    <fields>
+        <fullName>Location_Coordinates__c</fullName>
+        <description>Location gps coordinates in decimal format.</description>
+        <displayLocationInDecimal>true</displayLocationInDecimal>
+        <externalId>false</externalId>
+        <label>Location Coordinates</label>
+        <required>false</required>
+        <scale>7</scale>
+        <trackTrending>false</trackTrending>
+        <type>Location</type>
+    </fields>
+</CustomObject>
