@@ -8,7 +8,7 @@ A managed package that syncs Karma Exchange's db with a Salesforce db using the 
 * v4s app version 3.58
 * v4s source treee: github (need to figure out what the exact commit timestamp of 3.5.8 is). For reference I've cloned commit  [f04f240e8141d0ac7ea4b9ce59f6293360d692ef](https://github.com/davidhabib/Volunteers-for-Salesforce/commit/f04f240e8141d0ac7ea4b9ce59f6293360d692ef) merged on 3/2/14.
 
-### Test the Unmanaged Package
+### Test the Managed Beta Package
 
 ##### [1] Pre-installation steps
 
@@ -24,10 +24,10 @@ c. Provide the Karma Exchange staff your salesforce db site url ("Build"->"Devel
 ##### [2] Package installation
 
 Use this URL to install the unmanaged package into your salesforce db:
-https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7Q2
+https://login.salesforce.com/packaging/installPackage.apexp?p0=04to0000000DmQg
 
 Note: If you are installing into a sandbox organization use the following url instead:
-http://test.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000H7Q2
+http://test.salesforce.com/packaging/installPackage.apexp?p0=04to0000000DmQg
 
 Default installation settings are fine. Nothing extra needs to be checked or unchecked.
 
@@ -41,8 +41,8 @@ Default installation settings are fine. Nothing extra needs to be checked or unc
 * scroll to "Enabled Apex Class Access"
 * click "edit"
 * Add the following classes:
-  * `KexRegistrationController`
-  * `KexDebugController`
+  * `Karma.KexRegistrationController`
+  * `Karma.KexDebugController`
 * Click "Save"
 
 ##### [4] Configure the Karma Exchange adminstrator settings for your organization
