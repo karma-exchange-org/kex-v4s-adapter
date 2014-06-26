@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <webLinks>
+        <fullName>SyncShiftToKarmaExchange</fullName>
+        <availability>online</availability>
+        <displayType>button</displayType>
+        <linkType>javascript</linkType>
+        <masterLabel>Sync with Karma Exchange</masterLabel>
+        <openType>onClickJavaScript</openType>
+        <protected>false</protected>
+        <url>{!REQUIRESCRIPT(&apos;/soap/ajax/15.0/connection.js&apos;)}
+{!REQUIRESCRIPT(&apos;/soap/ajax/15.0/apex.js&apos;)}
+
+sforce.apex.execute(
+    &apos;KexAdminController&apos;,
+    &apos;syncShift&apos;,
+    { shiftId: &apos;{!GW_Volunteers__Volunteer_Shift__c.Id}&apos; });
+alert(&apos;The shift will be updated on Karma Exchange shortly.&apos;);</url>
+    </webLinks>
+</CustomObject>
