@@ -64,7 +64,7 @@ TODO(avaliani): automate this step
 * Click save
 
 
-##### [6] (optional) Define organizers / contacts for each shift. 
+##### [6] Define organizers / contacts for each shift. (optional)
 
 *Note: Please verify all contacts have email addreses.*
 
