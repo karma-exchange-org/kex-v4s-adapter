@@ -24,10 +24,10 @@ c. Provide the Karma Exchange staff your salesforce db site url ("Build"->"Devel
 ##### [2] Package installation
 
 Use this URL to install the unmanaged package into your salesforce db:
-https://login.salesforce.com/packaging/installPackage.apexp?p0=04to0000000DmQg
+https://login.salesforce.com/packaging/installPackage.apexp?p0=04to0000000DnaA
 
 Note: If you are installing into a sandbox organization use the following url instead:
-http://test.salesforce.com/packaging/installPackage.apexp?p0=04to0000000DmQg
+http://test.salesforce.com/packaging/installPackage.apexp?p0=04to0000000DnaA
 
 Default installation settings are fine. Nothing extra needs to be checked or unchecked.
 
@@ -45,34 +45,30 @@ Default installation settings are fine. Nothing extra needs to be checked or unc
   * `Karma.KexDebugController`
 * Click "Save"
 
-##### [4] Configure the Karma Exchange adminstrator settings for your organization
-
-* "setup" -> "Develop->Custom Settings"
-* Click "manage" next to "Karma Exchange Admin Settings"
-* Click "new"
-* Specify the organization id, secret key, and server url from step [1]
-* Click save
-
-##### [5] Add Karma Exchange to the remote sites
+##### [4] Add Karma Exchange to the remote sites
 
 * "setup" -> "Administer->Security Controls->Remote Site Settings"
 * click "new remote site"
 * for the "remote site name" specify "KarmaExchange"
 * for the "remote site url" specify the url from step [1]
 
-##### [6] Define organizers / contacts for each shift. 
+TODO(avaliani): automate this step
 
-*Note: Please verify all contacts have email addreses.*
-
-a. We recommend you set an organizer at the org level just in case there isn't one at a lower level.
+##### [5] Configure the Karma Exchange adminstrator settings for your organization
 
 * Select the "Karma Exchange" app
 * Select the "Karma Exchange Settings" tab
 * Click new
-* Specify a default shift contact
+* Specify the organization id, secret key, and server url from step [1]
+* (recommended) Specify a default shift contact / default organizer for your organization
 * Click save
 
-b. There are a couple other ways to specify a contact (will be explained in detail later).
+
+##### [6] (optional) Define organizers / contacts for each shift. 
+
+*Note: Please verify all contacts have email addreses.*
+
+You can do this through the following fields:
 
 * Campaign.Default Shift Contact
 * Volunteer Job.Default Shift Contact
