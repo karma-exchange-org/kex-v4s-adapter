@@ -63,13 +63,6 @@
         <type>Lookup</type>
     </fields>
     <label>Karma Exchange Settings</label>
-    <listViews>
-        <fullName>All</fullName>
-        <columns>NAME</columns>
-        <columns>Default_Shift_Contact__c</columns>
-        <filterScope>Everything</filterScope>
-        <label>All</label>
-    </listViews>
     <nameField>
         <displayFormat>Settings-{00000}</displayFormat>
         <label>SettingsId</label>
