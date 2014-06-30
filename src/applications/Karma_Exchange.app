@@ -3,5 +3,4 @@
     <defaultLandingTab>Karma_Exchange_Admin</defaultLandingTab>
     <label>Karma Exchange</label>
     <tab>Karma_Exchange_Admin</tab>
-    <tab>KarmaExchangeSetting__c</tab>
 </CustomApplication>

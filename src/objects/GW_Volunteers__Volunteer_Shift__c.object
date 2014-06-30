@@ -11,10 +11,31 @@
         <url>{!REQUIRESCRIPT(&apos;/soap/ajax/15.0/connection.js&apos;)}
 {!REQUIRESCRIPT(&apos;/soap/ajax/15.0/apex.js&apos;)}
 
-sforce.apex.execute(
+apexExecute(
     &apos;KexAdminController&apos;,
     &apos;syncShift&apos;,
     { shiftId: &apos;{!GW_Volunteers__Volunteer_Shift__c.Id}&apos; });
-alert(&apos;The shift will be updated on Karma Exchange shortly.&apos;);</url>
+alert(&apos;The shift will be updated on Karma Exchange shortly.&apos;);
+
+function apexExecute(className, methodName, params) {
+    var NAMESPACE_PREFIX = &apos;Karma.&apos;;
+    var nsClassName = NAMESPACE_PREFIX + className;
+    try {
+        return sforce.apex.execute(
+            nsClassName,
+            methodName,
+            params);    
+    } catch (e) {
+        // Check if we&apos;re executing in an unmanaged package.
+        if (e.toString().indexOf(&apos;No service available for class \&apos;&apos; + nsClassName + &apos;\&apos;&apos;) == -1)  {
+            throw e;
+        }
+        // Try again assuming we&apos;re in an unmanaged package.
+        return sforce.apex.execute(
+            className,
+            methodName,
+            params);
+    }
+}</url>
     </webLinks>
 </CustomObject>

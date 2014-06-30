@@ -1,6 +1,11 @@
 trigger KexSyncVolunteerHours on GW_Volunteers__Volunteer_Hours__c (
         after delete, after insert, after undelete, after update) {
 
+	// Check if automatic sync is enabled.
+	if (!Karma_Exchange_Admin_Settings__c.getInstance().Auto_Sync__c) {
+		return;
+	}
+
     // VOL_VolunteerHours_ShiftRollups automatically updates the shift if a 'Confirmed' or 'Completed'
     // volunteer has changed his status. Confirmed / Completed volunteers are the only ones that
     // count towards the total volunteer count. For Karma Exchange we also want to track those

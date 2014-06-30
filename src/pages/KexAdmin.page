@@ -1,14 +1,22 @@
-<apex:page cache="true" controller="KexAdminController" title="Karma Exchange Admin Console">
-    <apex:form >
-        <p>
+<apex:page controller="KexAdminController" title="Karma Exchange Admin" cache="false">
+	<apex:form >
+		<apex:pageMessages id="errMsg" />
+	    <apex:pageBlock title="Settings">
+	        <apex:pageBlockButtons >
+	            <apex:commandButton value="Save" action="{!saveSettings}" reRender="errMsg"/>
+	        </apex:pageBlockButtons>
+	        <apex:pageBlockSection columns="1">
+	            <apex:inputField value="{!customSettings.OrganizationId__c}"/>
+	            <apex:inputField value="{!customSettings.SecretKey__c}"/>
+	            <apex:inputField value="{!customSettings.ServerUrl__c}"/>
+	            <apex:inputField value="{!settings.Default_Shift_Contact__c}"/>
+	            <apex:inputField value="{!customSettings.Auto_Sync__c}"/>
+	        </apex:pageBlockSection>
+	    </apex:pageBlock>
+	    <apex:pageBlock title="Admin Actions">
             <apex:commandButton action="{!syncUpcomingShifts}"
                 value="Sync All Upcoming Volunteer Shifts"
-                onComplete="alert('Sync initiated. Please monitor apex jobs for completion.')" />
-        </p>
-        <p>
-            <apex:commandButton action="{!enableAutoSync}"
-                value=" Enable Automatic Volunteer Shift Sync "
-                onComplete="alert('Automatic shift sync enabled.')" />
-        </p>
+                reRender="errMsg"/>
+	    </apex:pageBlock>
     </apex:form>
 </apex:page>
