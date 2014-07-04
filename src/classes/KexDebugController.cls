@@ -15,7 +15,7 @@ global without sharing class KexDebugController {
 
             if (DebugAction.SYNC.name().equals(action)) {
                 KexInvalidParamException.notNull('shiftId', shiftId);
-                KexAdminController.syncShiftFuture(shiftId);
+                KexAdminActions.syncShiftFuture(shiftId);
                 return new KexRestServiceResponse(KexSourceEvent.toEvent(shiftId));
             } else if (DebugAction.SYNC_UPCOMING.name().equals(action)) {
                 KexAdminController.syncUpcomingShifts();

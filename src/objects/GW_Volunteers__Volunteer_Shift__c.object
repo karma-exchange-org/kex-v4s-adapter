@@ -12,7 +12,7 @@
 {!REQUIRESCRIPT(&apos;/soap/ajax/15.0/apex.js&apos;)}
 
 apexExecute(
-    &apos;KexAdminController&apos;,
+    &apos;KexAdminActions&apos;,
     &apos;syncShift&apos;,
     { shiftId: &apos;{!GW_Volunteers__Volunteer_Shift__c.Id}&apos; });
 alert(&apos;The shift will be updated on Karma Exchange shortly.&apos;);

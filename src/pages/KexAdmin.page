@@ -6,10 +6,11 @@
 	            <apex:commandButton value="Save" action="{!saveSettings}" reRender="errMsg"/>
 	        </apex:pageBlockButtons>
 	        <apex:pageBlockSection columns="1">
+	            <apex:inputField label="Organization Account" value="{!orgLookupField.Volunteer_Job_Sponsor__c}"/>
 	            <apex:inputField value="{!customSettings.OrganizationId__c}"/>
 	            <apex:inputField value="{!customSettings.SecretKey__c}"/>
 	            <apex:inputField value="{!customSettings.ServerUrl__c}"/>
-	            <apex:inputField value="{!settings.Default_Shift_Contact__c}"/>
+	            <apex:inputField label="Default Shift Contact" value="{!contactLookupField.ContactId}"/>
 	            <apex:inputField value="{!customSettings.Auto_Sync__c}"/>
 	        </apex:pageBlockSection>
 	    </apex:pageBlock>

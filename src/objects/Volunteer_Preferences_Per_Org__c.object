@@ -51,42 +51,47 @@
     <enableHistory>false</enableHistory>
     <enableReports>false</enableReports>
     <fields>
-        <fullName>Volunteer_Contact__c</fullName>
+        <fullName>Contact__c</fullName>
         <externalId>false</externalId>
-        <label>Volunteer Contact</label>
-        <length>18</length>
-        <required>false</required>
+        <label>Contact</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Volunteer Preferences Per Org</relationshipLabel>
+        <relationshipName>Volunteer_Preferences_Per_Org</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>true</reparentableMasterDetail>
         <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>true</writeRequiresMasterRead>
     </fields>
     <fields>
-        <fullName>Volunteer_Job__c</fullName>
+        <fullName>Has_Opted_Out_Of_Email__c</fullName>
+        <defaultValue>false</defaultValue>
         <externalId>false</externalId>
-        <label>Volunteer Job</label>
-        <length>18</length>
-        <required>false</required>
+        <label>Email Opt Out</label>
         <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
+        <type>Checkbox</type>
     </fields>
     <fields>
-        <fullName>Volunteer_Shift__c</fullName>
+        <fullName>Org__c</fullName>
+        <description>The organization for which these preferences apply.</description>
         <externalId>false</externalId>
-        <label>Volunteer Shift</label>
-        <length>18</length>
-        <required>false</required>
+        <label>Org</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>Volunteer Preferences Per Org</relationshipLabel>
+        <relationshipName>Volunteer_Preferences_Per_Org</relationshipName>
+        <relationshipOrder>1</relationshipOrder>
+        <reparentableMasterDetail>true</reparentableMasterDetail>
         <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
     </fields>
-    <label>Kex Sync Tracker</label>
+    <label>Volunteer Preferences Per Org</label>
     <nameField>
-        <displayFormat>SyncEntry-{00000}</displayFormat>
-        <label>SyncEntryId</label>
+        <displayFormat>Pref-{00000}</displayFormat>
+        <label>PreferencesId</label>
         <type>AutoNumber</type>
     </nameField>
-    <pluralLabel>Kex Sync Trackers</pluralLabel>
+    <pluralLabel>Volunteer Preferences Per Org</pluralLabel>
     <searchLayouts/>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
 </CustomObject>

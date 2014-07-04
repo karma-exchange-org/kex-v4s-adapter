@@ -13,6 +13,7 @@ public class KexTestDataFactory {
 
     public static final Integer MAX_SHIFT_VOLUNTEERS = 4;
 
+	private final Campaign cmp;
     public final Id campaignId;
 
     private final Id accountId;
@@ -24,13 +25,14 @@ public class KexTestDataFactory {
         adminSettings.SecretKey__c = SECRET_KEY;
         adminSettings.OrganizationId__c = 'KexTestOrgId';
         adminSettings.ServerUrl__c = KEX_SERVER_URL;
+        adminSettings.Auto_Sync__c = true;
         insert adminSettings;
 
         Account acc = new Account(name='Individual Test Account');
         insert acc;
         accountId = acc.id;
 
-        Campaign cmp = new Campaign(
+        cmp = new Campaign(
             recordtypeid=getVolunteersCampaignRecordTypeId(),
             name='Test Campaign',
             IsActive=true);
@@ -38,7 +40,7 @@ public class KexTestDataFactory {
         campaignId = cmp.Id;
     }
 
-    private static Id getVolunteersCampaignRecordTypeId() {
+    public static Id getVolunteersCampaignRecordTypeId() {
         list<RecordType> listRT = [SELECT Id FROM RecordType WHERE DeveloperName='Volunteers_Campaign'];
         System.assert(listRT.size() != 0);
         return listRT[0].Id;
@@ -57,10 +59,14 @@ public class KexTestDataFactory {
     }
 
     public GW_Volunteers__Volunteer_Shift__c createShift() {
+        return createShift(cmp);
+    }
+
+    public GW_Volunteers__Volunteer_Shift__c createShift(Campaign cmp) {
         jobCount++;
         GW_Volunteers__Volunteer_Job__c job = new GW_Volunteers__Volunteer_Job__c(
             name='TestJob' + jobCount,
-            GW_Volunteers__Campaign__c = campaignId,
+            GW_Volunteers__Campaign__c = cmp.Id,
             GW_Volunteers__Location_Street__c = JOB_LOCATION_STREET,
             GW_Volunteers__Location_City__c = JOB_LOCATION_CITY,
             GW_Volunteers__Location__c = JOB_LOCATION_STATE,
@@ -73,6 +79,21 @@ public class KexTestDataFactory {
             GW_Volunteers__Start_Date_Time__c = System.now().addDays(1));
         insert shift;
         return shift;
+    }
+
+    public GW_Volunteers__Volunteer_Hours__c registerVolunteer(GW_Volunteers__Volunteer_Shift__c shift, Contact volunteer) {
+    	DateTime shiftDate =
+    		shift.GW_Volunteers__Start_Date_Time__c;
+        GW_Volunteers__Volunteer_Hours__c hoursEntry = new GW_Volunteers__Volunteer_Hours__c(
+            GW_Volunteers__Contact__c = volunteer.ID,
+            GW_Volunteers__Volunteer_Shift__c = shift.ID,
+            GW_Volunteers__Volunteer_Job__c = shift.GW_Volunteers__Volunteer_Job__c,
+            GW_Volunteers__Start_Date__c =
+                Date.newInstance(shiftDate.year(), shiftDate.month(), shiftDate.day()),
+            GW_Volunteers__Status__c = 'Web Sign Up',
+            GW_Volunteers__Number_of_Volunteers__c = 1);
+        insert hoursEntry;
+        return hoursEntry;
     }
 
     public Volunteer_Shift_Contact__c createShiftContact(

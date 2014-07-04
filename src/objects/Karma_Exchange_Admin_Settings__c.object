@@ -23,11 +23,33 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>Default_Shift_Contact__c</fullName>
+        <description>Default contact for all volunteer shifts that don&apos;t otherwise have a contact associated with them.</description>
+        <externalId>false</externalId>
+        <label>Default Shift Contact</label>
+        <length>18</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
         <fullName>OrganizationId__c</fullName>
         <externalId>false</externalId>
         <label>Organization Id</label>
         <length>100</length>
         <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Organization__c</fullName>
+        <description>The account id for the default volunteer organization.</description>
+        <externalId>false</externalId>
+        <label>Organization</label>
+        <length>18</length>
+        <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>

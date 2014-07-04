@@ -5,6 +5,8 @@ public without sharing class KexSourceEvent {
     private static final String VH_STATUS_COMPLETED = 'Completed';
     private static final String VH_STATUS_NO_SHOW = 'No-Show';
 
+    private static final Id DEFAULT_SHIFT_CONTACT = Karma_Exchange_Admin_Settings__c.getInstance().Default_Shift_Contact__c;
+
     public String sourceEventId;
     public long sourceLastModifiedDate;
     public List<KexSourceParticipant> sourceParticipants = new List<KexSourceParticipant>();
@@ -142,12 +144,10 @@ public without sharing class KexSourceEvent {
                 shift.GW_Volunteers__Desired_Number_of_Volunteers__c.intValue() :
                 0;
 
-            if (job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__c != null) {
+            if (job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r != null) {
                 event.sourceAssociatedOrg = new KexAssociatedOrg(
-                    job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Name,
-                    job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Karma_Exchange_Org_Id__c,
-                    job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Karma_Exchange_Org_Secret_Key__c,
-                    KexAssociatedOrg.OrgAssociation.EVENT_SPONSOR);
+                	job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r,
+                	KexAssociatedOrg.OrgAssociation.EVENT_SPONSOR);
             }
 
             event.setParticipants(shift);
@@ -197,11 +197,8 @@ public without sharing class KexSourceEvent {
             if (participantType != null) {
                 KexSourceParticipant participant = new KexSourceParticipant();
                 participant.type = participantType;
-                KexSourceUser sourceUser = new KexSourceUser();
-                sourceUser.firstName = shiftVolunteer.GW_Volunteers__Contact__r.FirstName;
-                sourceUser.lastName = shiftVolunteer.GW_Volunteers__Contact__r.LastName;
-                sourceUser.email = shiftVolunteer.GW_Volunteers__Contact__r.Email;
-                participant.user = sourceUser;
+                participant.user =
+                	new KexSourceUser(shiftVolunteer.GW_Volunteers__Contact__r);
                 sourceParticipants.add(participant);
             }
         }
@@ -219,33 +216,31 @@ public without sharing class KexSourceEvent {
                 where Volunteer_Shift__c = : shift.Id];
         for (Volunteer_Shift_Contact__c shiftContact : shiftContacts) {
             if (primary==null) {
-                primary = toOrganizer(shiftContact.Contact__r.FirstName, shiftContact.Contact__r.LastName, shiftContact.Contact__r.Email);
+                primary = toOrganizer(shiftContact.Contact__r);
             } else if (shiftContact.Is_Primary__c) {
                 others.add(primary);
-                primary = toOrganizer(shiftContact.Contact__r.FirstName, shiftContact.Contact__r.LastName, shiftContact.Contact__r.Email);
+                primary = toOrganizer(shiftContact.Contact__r);
             } else {
-                others.add(toOrganizer(shiftContact.Contact__r.FirstName, shiftContact.Contact__r.LastName, shiftContact.Contact__r.Email));
+                others.add(toOrganizer(shiftContact.Contact__r));
             }
         }
         if ( (primary == null) && shift.GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__c != null) {
             //go to job
-            primary = toOrganizer(
-                shift.GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.FirstName,
-                shift.GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.LastName,
-                shift.GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.Email);
+            primary = toOrganizer(shift.GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r);
         }
         if ( (primary == null) && shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__c != null) {
             //go to campaign
-            primary = toOrganizer(
-                shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.FirstName,
-                shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.LastName,
-                shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.Email);
+            primary = toOrganizer(shift.GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r);
         }
         if (primary == null) {
             //go to Org
-            List<KarmaExchangeSetting__c> kexs = [select Default_Shift_Contact__r.FirstName,Default_Shift_Contact__r.LastName,Default_Shift_Contact__r.Email from KarmaExchangeSetting__c limit 1];
-            if(kexs.size()>0) {
-                primary = toOrganizer(kexs[0].Default_Shift_Contact__r.FirstName,kexs[0].Default_Shift_Contact__r.LastName,kexs[0].Default_Shift_Contact__r.Email);
+            if (DEFAULT_SHIFT_CONTACT != null) {
+            	List<Contact> defaultShiftContactQueryResult =
+            		[select FirstName, LastName, Email from Contact where Id = :DEFAULT_SHIFT_CONTACT];
+            	if (defaultShiftContactQueryResult.size() > 0) {
+            		Contact defaultShiftContact = defaultShiftContactQueryResult[0];
+            		primary = toOrganizer(defaultShiftContact);
+            	}
             }
         }
         participants.add(primary);
@@ -253,14 +248,11 @@ public without sharing class KexSourceEvent {
         return participants;
     }
 
-    private static KexSourceParticipant toOrganizer(String firstName, String lastName, String email) {
+    private static KexSourceParticipant toOrganizer(Contact organizer) {
         KexSourceParticipant participant = new KexSourceParticipant();
         participant.type = KexSourceParticipant.TYPE_ORGANIZER;
-        KexSourceUser sourceUser = new KexSourceUser();
-        sourceUser.firstName = firstName;
-        sourceUser.lastName = lastName;
-        sourceUser.email = email;
-        participant.user = sourceUser;
+        participant.user =
+        	new KexSourceUser(organizer);
         return participant;
     }
 

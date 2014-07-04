@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Sponsoring_Org_Email_Opt_Out__c</fullName>
+        <defaultValue>false</defaultValue>
+        <description>If checked the volunteer does not want to receive emails from the sponsoring org. This is field is derived from Volunteer Preferences Per Org and should not be explicitly updated.</description>
+        <externalId>false</externalId>
+        <label>Sponsoring Org Email Opt Out</label>
+        <type>Checkbox</type>
+    </fields>
+</CustomObject>

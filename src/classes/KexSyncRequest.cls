@@ -16,8 +16,10 @@ public without sharing class KexSyncRequest {
     public static final String PARAM_ORG_SECRET = 'org_secret';
 
     public String action;
+
     public String sourceEventId;
     public KexSourceEvent sourceEvent;
+    public KexSourceUserAndPrefs sourceUserAndPrefs;
 
     public KexSyncRequest(String action, String sourceEventId) {
         this(action, sourceEventId, null);
@@ -25,6 +27,11 @@ public without sharing class KexSyncRequest {
 
     public KexSyncRequest(String action, KexSourceEvent sourceEvent) {
         this(action, null, sourceEvent);
+    }
+
+    public KexSyncRequest(KexSourceUserAndPrefs sourceUserAndPrefs) {
+        this.action = ACTION_UPSERT;
+        this.sourceUserAndPrefs = sourceUserAndPrefs;
     }
 
     private KexSyncRequest(String action, String sourceEventId, KexSourceEvent sourceEvent) {
