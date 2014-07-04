@@ -11,9 +11,12 @@ global without sharing class KexSyncPendingShiftsBatch implements Database.Batch
 
     global void execute(Database.BatchableContext BC, List<KexSyncTracker__c> syncList){
         List<KexSyncRequest> syncReqs = createSyncReqs(syncList);
-        // TODO(avaliani): handle send failure (fix send failure to throw an exception)
         KexSyncRequest.send(syncReqs);
         delete syncList;
+    }
+
+    global void finish(Database.BatchableContext BC) {
+        // Nothing to do.
     }
 
     private List<KexSyncRequest> createSyncReqs(List<KexSyncTracker__c> syncList) {
@@ -52,7 +55,4 @@ global without sharing class KexSyncPendingShiftsBatch implements Database.Batch
         }
     }
 
-    global void finish(Database.BatchableContext BC) {
-        // Nothing to do.
-    }
 }

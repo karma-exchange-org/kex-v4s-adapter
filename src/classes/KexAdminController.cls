@@ -1,62 +1,31 @@
 global without sharing class KexAdminController {
 
-    webservice static void syncShift(Id shiftId) {
-        syncShiftFuture(shiftId);
-    }
+	public Karma_Exchange_Admin_Settings__c customSettings { get; set; }
 
-    // Was getting a 502 when making a callout from the webservice method.
-    //   https://developer.salesforce.com/forums/ForumsMain?id=906F00000008jyVIAQ
-    @future (callout=true)
-    public static void syncShiftFuture(Id shiftId) {
-        List<KexSyncRequest> syncReqs = new List<KexSyncRequest>();
-        KexSourceEvent event =
-            KexSourceEvent.toEvent(shiftId);
-        if (event == null) {
-            throw new KexObjectNotFoundException(shiftId);
-        }
-        syncReqs.add(
-            new KexSyncRequest(KexSyncRequest.ACTION_UPSERT, event));
-        KexSyncRequest.send(syncReqs);
-    }
+	// This is a hack to get the lookup field icon.
+	public Campaign orgLookupField { get; set; }
 
-    public static void syncUpcomingShifts() {
-        database.executebatch(
-            new KexSyncUpcomingShiftsBatch());
-        ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.CONFIRM,
-        	'Sync initiated. Please monitor apex jobs for completion.'));
-    }
+	// This is a hack to get the lookup field icon.
+	public CampaignMember contactLookupField { get; set; }
 
-	public Karma_Exchange_Admin_Settings__c customSettings {
-        get {
-            if (customSettings == null) {
-            	customSettings = Karma_Exchange_Admin_Settings__c.getInstance();
-            }
-            return customSettings;
-        }
-		set;
-	}
-
-	public KarmaExchangeSetting__c settings {
-        get {
-            if (settings == null) {
-            	List<KarmaExchangeSetting__c> persistedSettings =
-            		[select id, Default_Shift_Contact__c from KarmaExchangeSetting__c limit 1];
-            	if (persistedSettings.size() > 0) {
-            		settings = persistedSettings[0];
-            	} else {
-            		settings = new KarmaExchangeSetting__c();
-            	}
-            }
-            return settings;
-        }
-		set;
+	public KexAdminController() {
+		customSettings = Karma_Exchange_Admin_Settings__c.getInstance();
+		orgLookupField = new Campaign();
+		if (customSettings.Organization__c != null) {
+			orgLookupField.Volunteer_Job_Sponsor__c = customSettings.Organization__c;
+		}
+		contactLookupField = new CampaignMember();
+		if (customSettings.Default_Shift_Contact__c != null) {
+			contactLookupField.ContactId = customSettings.Default_Shift_Contact__c;
+		}
 	}
 
 	public PageReference saveSettings() {
 		try {
 			updateAutoSync();
+			customSettings.Organization__c = orgLookupField.Volunteer_Job_Sponsor__c;
+			customSettings.Default_Shift_Contact__c = contactLookupField.ContactId;
 			upsert customSettings;
-			upsert settings;
 		} catch (exception ex) {
 			// ApexPages.addMessage(new ApexPages.Message(ApexPages.Severity.FATAL, ex.getMessage()));
 			ApexPages.addMessages(ex);
@@ -91,5 +60,12 @@ global without sharing class KexAdminController {
 			}
 		}
 	}
+
+    public static void syncUpcomingShifts() {
+        database.executebatch(
+            new KexSyncUpcomingShiftsBatch());
+        ApexPages.addMessage(new ApexPages.Message(ApexPages.severity.CONFIRM,
+        	'Sync initiated. Please monitor apex jobs for completion.'));
+    }
 
 }
