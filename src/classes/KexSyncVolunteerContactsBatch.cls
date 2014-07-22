@@ -2,7 +2,7 @@ global without sharing class KexSyncVolunteerContactsBatch implements Database.B
 
     global Database.QueryLocator start(Database.BatchableContext bc) {
         return Database.getQueryLocator(
-        	'SELECT Id FROM Contact where GW_Volunteers__First_Volunteer_Date__c != null');
+        	'SELECT Id FROM Contact where GW_Volunteers__Volunteer_Last_Web_Signup_Date__c != null');
     }
 
     global void execute(Database.BatchableContext BC, List<Contact> volunteerContacts){

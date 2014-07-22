@@ -30,7 +30,7 @@ global without sharing class KexSyncPendingContactsBatch implements Database.Bat
         // Nothing to do.
     }
 
-	private static List<KexSyncRequest> createSyncRequests(Set<Id> contacts) {
+	public static List<KexSyncRequest> createSyncRequests(Set<Id> contacts) {
     	List<Contact> results = [SELECT
 		    FirstName,
 		    LastName,
