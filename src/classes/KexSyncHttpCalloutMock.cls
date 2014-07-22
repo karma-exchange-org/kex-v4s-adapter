@@ -7,21 +7,26 @@ global class KexSyncHttpCalloutMock implements HttpCalloutMock {
     public KexSyncHttpCalloutMock(Id shiftId) {
         List<Id> shiftIds = new List<Id>();
         shiftIds.add(shiftId);
-        init(shiftIds, false);
+        init(createShiftSyncReqs(shiftIds), false);
     }
 
     public KexSyncHttpCalloutMock(List<Id> shiftIds, boolean calloutFromBatchJob) {
-        init(shiftIds, calloutFromBatchJob);
+        init(createShiftSyncReqs(shiftIds), calloutFromBatchJob);
     }
 
-    private void init(List<Id> shiftIds, boolean calloutFromBatchJob) {
+    public KexSyncHttpCalloutMock(List<KexSyncRequest> syncReqs, boolean calloutFromBatchJob) {
+    	init(syncReqs, calloutFromBatchJob);
+    }
+
+    public static List<KexSyncRequest> createShiftSyncReqs(List<Id> shiftIds) {
         List<KexSourceEvent> eventsToUpsert =
             KexSourceEvent.toEvents(shiftIds);
         Map<Id, KexSourceEvent> eventsToUpsertMap = new Map<Id, KexSourceEvent>();
         for (KexSourceEvent eventToUpsert : eventsToUpsert) {
             eventsToUpsertMap.put(eventToUpsert.sourceEventId, eventToUpsert);
         }
-        syncReqs = new List<KexSyncRequest>();
+        List<KexSyncRequest> syncReqs =
+        	new List<KexSyncRequest>();
         for (Id shiftId : shiftIds) {
             KexSourceEvent eventToUpsert = eventsToUpsertMap.get(shiftId);
             if (eventToUpsert == null) {
@@ -32,6 +37,15 @@ global class KexSyncHttpCalloutMock implements HttpCalloutMock {
                     new KexSyncRequest(KexSyncRequest.ACTION_UPSERT, eventToUpsert));
             }
         }
+        return syncReqs;
+    }
+
+    public static List<KexSyncRequest> createContactSyncReqs(Set<Id> contacts) {
+    	return KexSyncPendingContactsBatch.createSyncRequests(contacts);
+    }
+
+    private void init(List<KexSyncRequest> syncReqs, boolean calloutFromBatchJob) {
+    	this.syncReqs = syncReqs;
         if (calloutFromBatchJob) {
             KexSyncRequest.calloutMock = this;
         }

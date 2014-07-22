@@ -43,7 +43,7 @@ global without sharing class KexRegistrationController {
           'lastName=' + lastName + ', ' +
           'email=' + email);
 
-        Contact contact = lookupOrCreateContact(firstName, lastName, email);
+        Contact contact = updateOrCreateContact(firstName, lastName, email);
 
         // TODO(avaliani): Do we need a select for update here? Triggers is going to update this.
         //   Is the trigger updating it as part of the same txn or only post-commit?
@@ -105,7 +105,7 @@ global without sharing class KexRegistrationController {
         }
     }
 
-    private static Contact lookupOrCreateContact(String firstName, String lastName, String email) {
+    private static Contact updateOrCreateContact(String firstName, String lastName, String email) {
         // TODO(avaliani): close out timing window for duplicate contacts.
         Contact[] contactQueryResult =
           [Select c.ID from Contact c where
@@ -122,6 +122,8 @@ global without sharing class KexRegistrationController {
             insert contact;
         } else {
             contact = contactQueryResult[0];
+            contact.GW_Volunteers__Volunteer_Last_Web_Signup_Date__c = Date.today();
+            update contact;
         }
         return contact;
     }

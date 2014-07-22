@@ -12,7 +12,7 @@ trigger KexSyncContact on Contact (after update) {
 	for (Contact updatedContact : Trigger.new) {
 		Contact oldContact =
 			Trigger.oldMap.get(updatedContact.id);
-		if ( (updatedContact.GW_Volunteers__First_Volunteer_Date__c != null)
+		if ( (updatedContact.GW_Volunteers__Volunteer_Last_Web_Signup_Date__c != null)
 			 && ( (updatedContact.FirstName != oldContact.FirstName) ||
 			      (updatedContact.LastName != oldContact.LastName) ||
 			      (updatedContact.Email != oldContact.Email) ||

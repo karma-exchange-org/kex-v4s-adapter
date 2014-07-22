@@ -82,6 +82,8 @@ public class KexTestDataFactory {
     }
 
     public GW_Volunteers__Volunteer_Hours__c registerVolunteer(GW_Volunteers__Volunteer_Shift__c shift, Contact volunteer) {
+    	volunteer.GW_Volunteers__Volunteer_Last_Web_Signup_Date__c = Date.today();
+    	update volunteer;
     	DateTime shiftDate =
     		shift.GW_Volunteers__Start_Date_Time__c;
         GW_Volunteers__Volunteer_Hours__c hoursEntry = new GW_Volunteers__Volunteer_Hours__c(

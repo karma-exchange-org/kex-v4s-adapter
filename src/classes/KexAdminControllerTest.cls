@@ -30,11 +30,21 @@ private class KexAdminControllerTest {
         System.assert(pendingEntries.isEmpty(), 'Jobs/shifts still require sync: ' + pendingEntries);
     }
 
-    static testmethod void testEnableAutoSync() {
-        // Unfortunately a schedulable job that invokes a batch job in testing
-        // does not run the batch job. So we only have this test for coverage.
-        Test.startTest();
-        KexAdminController.enableAutoSync();
-        Test.stopTest();
+    static testmethod void testSaveSettings() {
+        KexTestDataFactory testDataFactory = new KexTestDataFactory();
+
+        PageReference pageRef = Page.KexAdmin;
+        Test.setCurrentPage(pageRef);
+
+        KexAdminController adminController = new KexAdminController();
+
+		// Just go for coverage.
+        adminController.customSettings.Auto_Sync__c =
+        	!adminController.customSettings.Auto_Sync__c;
+        adminController.saveSettings();
+
+        adminController.customSettings.Auto_Sync__c =
+        	!adminController.customSettings.Auto_Sync__c;
+        adminController.saveSettings();
     }
 }

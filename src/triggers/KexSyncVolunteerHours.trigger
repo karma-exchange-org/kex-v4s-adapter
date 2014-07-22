@@ -43,7 +43,4 @@ trigger KexSyncVolunteerHours on GW_Volunteers__Volunteer_Hours__c (
         pendingSyncReqs.add(sync);
     }
     insert pendingSyncReqs;
-
-    // debug temporary
-    System.debug('KexSyncVolunteerHours: shift ids:' + shiftsToSync);
 }
