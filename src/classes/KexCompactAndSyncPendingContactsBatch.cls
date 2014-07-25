@@ -1,6 +1,16 @@
-global without sharing class KexCompactAndSyncPendingContactsBatch implements Database.Batchable<sObject>, Database.Stateful {
+global without sharing class KexCompactAndSyncPendingContactsBatch implements Database.Batchable<sObject>, Database.Stateful, Schedulable {
 
     private Id lastContactProcessed;
+
+    private Database.Batchable<sObject> nextBatchJob;
+
+    public KexCompactAndSyncPendingContactsBatch(Database.Batchable<sObject> nextBatchJob) {
+        this.nextBatchJob = nextBatchJob;
+    }
+
+    global void execute(SchedulableContext ctx) {
+        Database.executeBatch(this);
+    }
 
     global Database.QueryLocator start(Database.BatchableContext bc) {
         return Database.getQueryLocator(
@@ -24,7 +34,7 @@ global without sharing class KexCompactAndSyncPendingContactsBatch implements Da
 
     global void finish(Database.BatchableContext BC) {
         database.executebatch(
-            new KexSyncPendingContactsBatch(),
+            new KexSyncPendingContactsBatch(nextBatchJob),
             KexSyncPendingContactsBatch.BATCH_SIZE);
     }
 

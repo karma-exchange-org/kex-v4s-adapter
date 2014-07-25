@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>KarmaExchange</fullName>
+    <apiAccessLevel>Unrestricted</apiAccessLevel>
+    <namespacePrefix>Karma</namespacePrefix>
     <types>
         <members>KexAdminActions</members>
         <members>KexAdminController</members>
         <members>KexAdminControllerTest</members>
         <members>KexAssociatedOrg</members>
-        <members>KexAssociatedOrgAndPrefs</members>
         <members>KexAuthFailureException</members>
+        <members>KexBaseSourceUser</members>
         <members>KexCompactAndSyncPendingContactsBatch</members>
         <members>KexCompactAndSyncPendingShiftsBatch</members>
         <members>KexCompactAndSyncPendingShiftsBatchTest</members>
@@ -17,6 +19,8 @@
         <members>KexInvalidParamException</members>
         <members>KexInvalidParamExceptionTest</members>
         <members>KexObjectNotFoundException</members>
+        <members>KexOrg</members>
+        <members>KexOrgPrefs</members>
         <members>KexRegistrationController</members>
         <members>KexRegistrationControllerTest</members>
         <members>KexRegistrationLimitReachedException</members>
@@ -25,7 +29,6 @@
         <members>KexSourceEventTest</members>
         <members>KexSourceParticipant</members>
         <members>KexSourceUser</members>
-        <members>KexSourceUserAndPrefs</members>
         <members>KexSyncContactTest</members>
         <members>KexSyncFailureException</members>
         <members>KexSyncHttpCalloutMock</members>
@@ -114,6 +117,7 @@
         <name>ValidationRule</name>
     </types>
     <types>
+        <members>Contact.SyncContactToKarmaExchange</members>
         <members>GW_Volunteers__Volunteer_Shift__c.SyncShiftToKarmaExchange</members>
         <name>WebLink</name>
     </types>

@@ -4,7 +4,7 @@ global without sharing class KexDebugController {
     private static final String ORG_SECRET = Karma_Exchange_Admin_Settings__c.getInstance().SecretKey__c;
 
     @HttpPost
-    global static KexRestServiceResponse doPost(String secretKey, String action, Id shiftId) {
+    global static KexRestServiceResponse doPost(String secretKey, String action, Id objId) {
 
         try {
             KexInvalidParamException.notNull('action', action);
@@ -13,15 +13,27 @@ global without sharing class KexDebugController {
                 throw new KexAuthFailureException();
             }
 
-            if (DebugAction.SYNC.name().equals(action)) {
-                KexInvalidParamException.notNull('shiftId', shiftId);
-                KexAdminActions.syncShiftFuture(shiftId);
-                return new KexRestServiceResponse(KexSourceEvent.toEvent(shiftId));
-            } else if (DebugAction.SYNC_UPCOMING.name().equals(action)) {
+            if (DebugAction.SYNC_SHIFT.name().equals(action)) {
+
+                KexInvalidParamException.notNull('objId', objId);
+                KexAdminActions.syncShiftFuture(objId);
+                return new KexRestServiceResponse(KexSourceEvent.toEvent(objId));
+
+            } else if (DebugAction.SYNC_CONTACT.name().equals(action)) {
+
+                KexInvalidParamException.notNull('objId', objId);
+                KexAdminActions.syncContactFuture(objId);
+                return new KexRestServiceResponse();
+
+            } else if (DebugAction.SYNC_UPCOMING_SHIFTS.name().equals(action)) {
+
                 KexAdminController.syncUpcomingShifts();
                 return new KexRestServiceResponse();
+
             } else {
+
                 throw KexInvalidParamException.create('action');
+
             }
 
         } catch (KexTypedException e) {
@@ -32,8 +44,9 @@ global without sharing class KexDebugController {
     }
 
     private enum DebugAction {
-        SYNC,
-        SYNC_UPCOMING
+        SYNC_SHIFT,
+        SYNC_CONTACT,
+        SYNC_UPCOMING_SHIFTS
     }
 
 }

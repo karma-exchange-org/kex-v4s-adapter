@@ -15,7 +15,7 @@ global class KexSyncHttpCalloutMock implements HttpCalloutMock {
     }
 
     public KexSyncHttpCalloutMock(List<KexSyncRequest> syncReqs, boolean calloutFromBatchJob) {
-    	init(syncReqs, calloutFromBatchJob);
+        init(syncReqs, calloutFromBatchJob);
     }
 
     public static List<KexSyncRequest> createShiftSyncReqs(List<Id> shiftIds) {
@@ -23,10 +23,10 @@ global class KexSyncHttpCalloutMock implements HttpCalloutMock {
             KexSourceEvent.toEvents(shiftIds);
         Map<Id, KexSourceEvent> eventsToUpsertMap = new Map<Id, KexSourceEvent>();
         for (KexSourceEvent eventToUpsert : eventsToUpsert) {
-            eventsToUpsertMap.put(eventToUpsert.sourceEventId, eventToUpsert);
+            eventsToUpsertMap.put(eventToUpsert.sourceEventInfo.id, eventToUpsert);
         }
         List<KexSyncRequest> syncReqs =
-        	new List<KexSyncRequest>();
+            new List<KexSyncRequest>();
         for (Id shiftId : shiftIds) {
             KexSourceEvent eventToUpsert = eventsToUpsertMap.get(shiftId);
             if (eventToUpsert == null) {
@@ -41,17 +41,20 @@ global class KexSyncHttpCalloutMock implements HttpCalloutMock {
     }
 
     public static List<KexSyncRequest> createContactSyncReqs(Set<Id> contacts) {
-    	return KexSyncPendingContactsBatch.createSyncRequests(contacts);
+        return KexSyncPendingContactsBatch.createSyncRequests(contacts);
     }
 
     private void init(List<KexSyncRequest> syncReqs, boolean calloutFromBatchJob) {
-    	this.syncReqs = syncReqs;
+        this.syncReqs = syncReqs;
         if (calloutFromBatchJob) {
             KexSyncRequest.calloutMock = this;
         }
     }
 
     global HTTPResponse respond(HTTPRequest req) {
+        List<KexSyncRequest> syncReqsWithConfig =
+            KexSyncRequest.addConfigToSyncReqs(syncReqs);
+
         numTimesInvoked++;
         System.assertEquals(
             KexTestDataFactory.KEX_SERVER_URL + KexSyncRequest.PATH_DERIVED_EVENT_SYNC +
@@ -60,7 +63,7 @@ global class KexSyncHttpCalloutMock implements HttpCalloutMock {
                 KexSyncRequest.PARAM_ORG_SECRET + '=' + KexTestDataFactory.SECRET_KEY,
             req.getEndpoint());
         System.assertEquals('POST', req.getMethod());
-        System.assertEquals(JSON.serialize(syncReqs), req.getBody());
+        System.assertEquals(JSON.serialize(syncReqsWithConfig), req.getBody());
 
         // Create a fake response
         HttpResponse res = new HttpResponse();

@@ -10,6 +10,7 @@ public without sharing class KexSyncRequest {
     private static final String KEX_SERVER_URL = Karma_Exchange_Admin_Settings__c.getInstance().ServerUrl__c;
     private static final String ORG_ID = Karma_Exchange_Admin_Settings__c.getInstance().OrganizationId__c;
     private static final String ORG_SECRET = Karma_Exchange_Admin_Settings__c.getInstance().SecretKey__c;
+    private static final String ORG_ACCOUNT_ID = Karma_Exchange_Admin_Settings__c.getInstance().Organization__c;
 
     public static final String PATH_DERIVED_EVENT_SYNC = '/api/derived/event';
     public static final String PARAM_ORG_ID = 'org_id';
@@ -19,7 +20,8 @@ public without sharing class KexSyncRequest {
 
     public String sourceEventId;
     public KexSourceEvent sourceEvent;
-    public KexSourceUserAndPrefs sourceUserAndPrefs;
+    public KexSourceUser sourceUser;
+    public KexSourceConfig sourceConfig;
 
     public KexSyncRequest(String action, String sourceEventId) {
         this(action, sourceEventId, null);
@@ -29,9 +31,14 @@ public without sharing class KexSyncRequest {
         this(action, null, sourceEvent);
     }
 
-    public KexSyncRequest(KexSourceUserAndPrefs sourceUserAndPrefs) {
+    public KexSyncRequest(KexSourceUser sourceUser) {
         this.action = ACTION_UPSERT;
-        this.sourceUserAndPrefs = sourceUserAndPrefs;
+        this.sourceUser = sourceUser;
+    }
+
+    public KexSyncRequest(KexSourceConfig sourceConfig) {
+        this.action = ACTION_UPSERT;
+        this.sourceConfig = sourceConfig;
     }
 
     private KexSyncRequest(String action, String sourceEventId, KexSourceEvent sourceEvent) {
@@ -41,7 +48,20 @@ public without sharing class KexSyncRequest {
     }
 
     public static void send(List<KexSyncRequest> syncReqs) {
-        sendHttpReq(JSON.serialize(syncReqs), PATH_DERIVED_EVENT_SYNC);
+        List<KexSyncRequest> syncReqsWithConfig =
+            addConfigToSyncReqs(syncReqs);
+        sendHttpReq(JSON.serialize(syncReqsWithConfig), PATH_DERIVED_EVENT_SYNC);
+    }
+
+    // This method was added so we don't have to have an explicit config sync code path. Since the config is
+    // small this should have very little overhead.
+    //
+    // @VisibleForTesting
+    public static List<KexSyncRequest> addConfigToSyncReqs(List<KexSyncRequest> syncReqs) {
+        List<KexSyncRequest> syncReqsWithConfig =
+            new List<KexSyncRequest> { new KexSyncRequest(new KexSourceConfig()) };
+        syncReqsWithConfig.addAll(syncReqs);
+        return syncReqsWithConfig;
     }
 
     private static void sendHttpReq(String body, String apiPath) {
@@ -89,5 +109,13 @@ public without sharing class KexSyncRequest {
 
     private static boolean reqSuccessful(HttpResponse res) {
         return (200 <= res.getStatusCode()) && (res.getStatusCode() <= 299);
+    }
+
+    public class KexSourceConfig {
+        public String rootOrgId;
+
+        public KexSourceConfig() {
+            rootOrgId = ORG_ACCOUNT_ID;
+        }
     }
 }
