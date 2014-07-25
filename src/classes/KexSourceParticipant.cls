@@ -4,5 +4,5 @@ public with sharing class KexSourceParticipant {
     public static final String TYPE_REGISTERED_NO_SHOW = 'REGISTERED_NO_SHOW';
 
     public String type;
-    public KexSourceUser user;
+    public KexBaseSourceUser user;
 }

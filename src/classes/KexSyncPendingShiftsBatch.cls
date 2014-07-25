@@ -33,7 +33,7 @@ global without sharing class KexSyncPendingShiftsBatch implements Database.Batch
         // Create deletion requests.
         Set<Id> deletionShifts = new Set<Id>(allShifts);
         for(KexSyncRequest ksr : syncReqs) {
-            deletionShifts.remove(ksr.sourceEvent.sourceEventId);
+            deletionShifts.remove(ksr.sourceEvent.sourceEventInfo.id);
         }
         createDeletionReqs(syncReqs, deletionShifts);
 

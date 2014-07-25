@@ -1,23 +1,23 @@
 <apex:page controller="KexAdminController" title="Karma Exchange Admin" cache="false">
-	<apex:form >
-		<apex:pageMessages id="errMsg" />
-	    <apex:pageBlock title="Settings">
-	        <apex:pageBlockButtons >
-	            <apex:commandButton value="Save" action="{!saveSettings}" reRender="errMsg"/>
-	        </apex:pageBlockButtons>
-	        <apex:pageBlockSection columns="1">
-	            <apex:inputField label="Organization Account" value="{!orgLookupField.Volunteer_Job_Sponsor__c}"/>
-	            <apex:inputField value="{!customSettings.OrganizationId__c}"/>
-	            <apex:inputField value="{!customSettings.SecretKey__c}"/>
-	            <apex:inputField value="{!customSettings.ServerUrl__c}"/>
-	            <apex:inputField label="Default Shift Contact" value="{!contactLookupField.ContactId}"/>
-	            <apex:inputField value="{!customSettings.Auto_Sync__c}"/>
-	        </apex:pageBlockSection>
-	    </apex:pageBlock>
-	    <apex:pageBlock title="Admin Actions">
+    <apex:form >
+        <apex:pageMessages id="errMsg" />
+        <apex:pageBlock title="Settings">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!saveSettings}" reRender="errMsg"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection columns="1">
+                <apex:inputField label="Organization Account" value="{!orgLookupField.Volunteer_Job_Sponsor__c}" required="true"/>
+                <apex:inputField label="Karma Exchange Organization Id" value="{!customSettings.OrganizationId__c}"/>
+                <apex:inputField label="Karma Exchange Secret Key" value="{!customSettings.SecretKey__c}"/>
+                <apex:inputField label="Karma Exchange Server Url" value="{!customSettings.ServerUrl__c}"/>
+                <apex:inputField label="Default Shift Contact" value="{!contactLookupField.ContactId}"/>
+                <apex:inputField value="{!customSettings.Auto_Sync__c}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock title="Admin Actions">
             <apex:commandButton action="{!syncUpcomingShifts}"
                 value="Sync All Upcoming Volunteer Shifts"
                 reRender="errMsg"/>
-	    </apex:pageBlock>
+        </apex:pageBlock>
     </apex:form>
 </apex:page>

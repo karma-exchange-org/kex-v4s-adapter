@@ -129,8 +129,8 @@ private class KexSourceEventTest {
         KexSourceEvent kexEvent = KexSourceEvent.toEvent(shift.id);
         System.assert(kexEvent != null);
         KexAssociatedOrg assocOrg = kexEvent.sourceAssociatedOrg;
-        System.assert((assocOrg != null) && assocOrg.name.equals('Associated Volunteer Org') &&
-            assocOrg.orgId.equals('StewardshipNetwork') && assocOrg.secretKey.equals('FakeKey'),
+        System.assert((assocOrg != null) && assocOrg.org.name.equals('Associated Volunteer Org') &&
+            assocOrg.org.orgId.equals('StewardshipNetwork') && assocOrg.org.secretKey.equals('FakeKey'),
             'Associated org does not match: ' + assocOrg);
     }
 

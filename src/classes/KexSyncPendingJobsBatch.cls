@@ -1,10 +1,6 @@
-global without sharing class KexSyncPendingJobsBatch implements Database.Batchable<sObject>, Database.Stateful, Schedulable {
+global without sharing class KexSyncPendingJobsBatch implements Database.Batchable<sObject>, Database.Stateful {
 
     private List<KexSyncTracker__c> syncList;
-
-    global void execute(SchedulableContext ctx) {
-        Database.executeBatch(this);
-    }
 
     global Database.QueryLocator start(Database.BatchableContext bc) {
         // Limiting job query to 10,000 ids because in one hour no single

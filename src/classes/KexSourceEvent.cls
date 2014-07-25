@@ -7,8 +7,7 @@ public without sharing class KexSourceEvent {
 
     private static final Id DEFAULT_SHIFT_CONTACT = Karma_Exchange_Admin_Settings__c.getInstance().Default_Shift_Contact__c;
 
-    public String sourceEventId;
-    public long sourceLastModifiedDate;
+    public KexSourceEventInfo sourceEventInfo;
     public List<KexSourceParticipant> sourceParticipants = new List<KexSourceParticipant>();
     public KexAssociatedOrg sourceAssociatedOrg;
 
@@ -49,6 +48,21 @@ public without sharing class KexSourceEvent {
         }
     }
 
+    public class KexSourceEventInfo {
+        public String id;
+        public long lastModifiedDate;
+
+        public KexSourceEventInfo(String id, long lastModifiedDate) {
+            this.id = id;
+            this.lastModifiedDate = lastModifiedDate;
+        }
+    }
+
+    private KexSourceEvent(Id shiftId, DateTime lastModifiedDate) {
+        sourceEventInfo =
+            new KexSourceEventInfo(shiftId, lastModifiedDate.getTime());
+    }
+
     public static KexSourceEvent toEvent(Id shiftId) {
         List<KexSourceEvent> eventQueryResult = toEvents(new List<Id> { shiftId });
         return eventQueryResult.isEmpty() ? null : eventQueryResult[0];
@@ -78,9 +92,11 @@ public without sharing class KexSourceEvent {
                    GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.FirstName,
                    GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.LastName,
                    GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.Email,
+                   GW_Volunteers__Volunteer_Job__r.Default_Shift_Contact__r.LastModifiedDate,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.FirstName,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.LastName,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.Email,
+                   GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Default_Shift_Contact__r.LastModifiedDate,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Name,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Karma_Exchange_Org_Id__c,
                    GW_Volunteers__Volunteer_Job__r.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r.Karma_Exchange_Org_Secret_Key__c,
@@ -92,9 +108,7 @@ public without sharing class KexSourceEvent {
             GW_Volunteers__Volunteer_Job__c job =
                 shift.GW_Volunteers__Volunteer_Job__r;
 
-            KexSourceEvent event = new KexSourceEvent();
-            event.sourceEventId = shift.Id;
-            event.sourceLastModifiedDate = shift.LastModifiedDate.getTime();
+            KexSourceEvent event = new KexSourceEvent(shift.id, shift.LastModifiedDate);
 
             event.title = job.Name;
             event.descriptionHtml = job.GW_Volunteers__Description__c;
@@ -146,8 +160,8 @@ public without sharing class KexSourceEvent {
 
             if (job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r != null) {
                 event.sourceAssociatedOrg = new KexAssociatedOrg(
-                	job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r,
-                	KexAssociatedOrg.OrgAssociation.EVENT_SPONSOR);
+                    job.GW_Volunteers__Campaign__r.Volunteer_Job_Sponsor__r,
+                    KexAssociatedOrg.OrgAssociation.EVENT_SPONSOR);
             }
 
             event.setParticipants(shift);
@@ -170,6 +184,7 @@ public without sharing class KexSourceEvent {
                 GW_Volunteers__Contact__r.FirstName,
                 GW_Volunteers__Contact__r.LastName,
                 GW_Volunteers__Contact__r.Email,
+                GW_Volunteers__Contact__r.LastModifiedDate,
                 LastModifiedDate
              from GW_Volunteers__Volunteer_Hours__c
              where GW_Volunteers__Volunteer_Shift__c = :shift.Id];
@@ -182,8 +197,8 @@ public without sharing class KexSourceEvent {
         //            prevents the system scheduler from re-assigning a recurring volunteer to this shift.
         for (GW_Volunteers__Volunteer_Hours__c shiftVolunteer : shiftVolunteers) {
             long lastModifiedDate = shiftVolunteer.LastModifiedDate.getTime();
-            if (lastModifiedDate > sourceLastModifiedDate) {
-                sourceLastModifiedDate = lastModifiedDate;
+            if (lastModifiedDate > this.sourceEventInfo.lastModifiedDate) {
+                this.sourceEventInfo.lastModifiedDate = lastModifiedDate;
             }
 
             String participantType = null;
@@ -198,7 +213,7 @@ public without sharing class KexSourceEvent {
                 KexSourceParticipant participant = new KexSourceParticipant();
                 participant.type = participantType;
                 participant.user =
-                	new KexSourceUser(shiftVolunteer.GW_Volunteers__Contact__r);
+                    new KexBaseSourceUser(shiftVolunteer.GW_Volunteers__Contact__r);
                 sourceParticipants.add(participant);
             }
         }
@@ -211,9 +226,14 @@ public without sharing class KexSourceEvent {
         List<KexSourceParticipant> others = new List<KexSourceParticipant>();
         KexSourceParticipant primary = null;
         List<Volunteer_Shift_Contact__c> shiftContacts =
-            [Select Contact__r.FirstName, Contact__r.LastName, Contact__r.Email, Is_Primary__c
-                from Volunteer_Shift_Contact__c
-                where Volunteer_Shift__c = : shift.Id];
+            [Select
+                Contact__r.FirstName,
+                Contact__r.LastName,
+                Contact__r.Email,
+                Contact__r.LastModifiedDate,
+                Is_Primary__c
+             from Volunteer_Shift_Contact__c
+             where Volunteer_Shift__c = : shift.Id];
         for (Volunteer_Shift_Contact__c shiftContact : shiftContacts) {
             if (primary==null) {
                 primary = toOrganizer(shiftContact.Contact__r);
@@ -235,12 +255,17 @@ public without sharing class KexSourceEvent {
         if (primary == null) {
             //go to Org
             if (DEFAULT_SHIFT_CONTACT != null) {
-            	List<Contact> defaultShiftContactQueryResult =
-            		[select FirstName, LastName, Email from Contact where Id = :DEFAULT_SHIFT_CONTACT];
-            	if (defaultShiftContactQueryResult.size() > 0) {
-            		Contact defaultShiftContact = defaultShiftContactQueryResult[0];
-            		primary = toOrganizer(defaultShiftContact);
-            	}
+                List<Contact> defaultShiftContactQueryResult =
+                    [select
+                        FirstName,
+                        LastName,
+                        Email,
+                        LastModifiedDate
+                    from Contact where Id = :DEFAULT_SHIFT_CONTACT];
+                if (defaultShiftContactQueryResult.size() > 0) {
+                    Contact defaultShiftContact = defaultShiftContactQueryResult[0];
+                    primary = toOrganizer(defaultShiftContact);
+                }
             }
         }
         participants.add(primary);
@@ -252,7 +277,7 @@ public without sharing class KexSourceEvent {
         KexSourceParticipant participant = new KexSourceParticipant();
         participant.type = KexSourceParticipant.TYPE_ORGANIZER;
         participant.user =
-        	new KexSourceUser(organizer);
+            new KexBaseSourceUser(organizer);
         return participant;
     }
 
