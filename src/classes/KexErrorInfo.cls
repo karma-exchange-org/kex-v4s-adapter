@@ -10,10 +10,12 @@ public with sharing class KexErrorInfo {
 
     public String type { get; private set; }
     public String message { get; private set; }
+    public String stackTrace { get; private set; }
 
     public KexErrorInfo(KexTypedException e) {
         type = e.getErrorType().name();
         message = e.getMessage();
+        stackTrace = e.getStackTraceString();
     }
 
     public KexErrorInfo(Exception e) {
@@ -23,5 +25,6 @@ public with sharing class KexErrorInfo {
             type = ErrorType.OTHER_EXCEPTION.name();
         }
         message = e.getMessage();
+        stackTrace = e.getStackTraceString();
     }
 }
