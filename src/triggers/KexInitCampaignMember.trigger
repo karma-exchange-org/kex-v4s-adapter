@@ -1,6 +1,6 @@
 trigger KexInitCampaignMember on CampaignMember (before insert) {
 
-    Id rootOrgId = Karma_Exchange_Settings__c.getInstance().Organization__c;
+    Id rootOrgId = Karma_Exchange_Settings__c.getOrgDefaults().Organization__c;
 
     // First lookup the sponsoring orgs for each of the campaigns.
 

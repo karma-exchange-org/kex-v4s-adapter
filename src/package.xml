@@ -77,13 +77,13 @@
         <members>GW_Volunteers__Volunteer_Job__c.External_Registration_Details__c</members>
         <members>GW_Volunteers__Volunteer_Job__c.External_Registration_Url__c</members>
         <members>GW_Volunteers__Volunteer_Job__c.Location_Coordinates__c</members>
-        <members>Karma_Exchange_Admin_Settings__c.Auto_Sync_Job_Id__c</members>
-        <members>Karma_Exchange_Admin_Settings__c.Auto_Sync__c</members>
-        <members>Karma_Exchange_Admin_Settings__c.Default_Shift_Contact__c</members>
-        <members>Karma_Exchange_Admin_Settings__c.OrganizationId__c</members>
-        <members>Karma_Exchange_Admin_Settings__c.Organization__c</members>
-        <members>Karma_Exchange_Admin_Settings__c.SecretKey__c</members>
-        <members>Karma_Exchange_Admin_Settings__c.ServerUrl__c</members>
+        <members>Karma_Exchange_Settings__c.Auto_Sync_Job_Id__c</members>
+        <members>Karma_Exchange_Settings__c.Auto_Sync__c</members>
+        <members>Karma_Exchange_Settings__c.Default_Shift_Contact__c</members>
+        <members>Karma_Exchange_Settings__c.Karma_Exchange_Organization_Id__c</members>
+        <members>Karma_Exchange_Settings__c.Karma_Exchange_Secret_Key__c</members>
+        <members>Karma_Exchange_Settings__c.Karma_Exchange_Server_Url__c</members>
+        <members>Karma_Exchange_Settings__c.Organization__c</members>
         <members>KexSyncTracker__c.Volunteer_Contact__c</members>
         <members>KexSyncTracker__c.Volunteer_Job__c</members>
         <members>KexSyncTracker__c.Volunteer_Shift__c</members>
@@ -96,7 +96,7 @@
         <name>CustomField</name>
     </types>
     <types>
-        <members>Karma_Exchange_Admin_Settings__c</members>
+        <members>Karma_Exchange_Settings__c</members>
         <members>KexSyncTracker__c</members>
         <members>Volunteer_Preferences_Per_Org__c</members>
         <members>Volunteer_Shift_Contact__c</members>

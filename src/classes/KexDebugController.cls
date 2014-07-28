@@ -1,7 +1,7 @@
 @RestResource(urlMapping='/kex-debug/*')
 global without sharing class KexDebugController {
 
-    private static final String ORG_SECRET = Karma_Exchange_Settings__c.getInstance().Karma_Exchange_Secret_Key__c;
+    private static final String ORG_SECRET = Karma_Exchange_Settings__c.getOrgDefaults().Karma_Exchange_Secret_Key__c;
 
     @HttpPost
     global static KexRestServiceResponse doPost(String secretKey, String action, Id objId) {

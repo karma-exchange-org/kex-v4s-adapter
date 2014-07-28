@@ -52,7 +52,7 @@ private class KexSyncContactTest {
 
         // Disable auto update and ensure that we don't add rows.
         Karma_Exchange_Settings__c adminSettings =
-            Karma_Exchange_Settings__c.getInstance();
+            Karma_Exchange_Settings__c.getOrgDefaults();
         adminSettings.Auto_Sync__c = false;
         upsert adminSettings;
 
