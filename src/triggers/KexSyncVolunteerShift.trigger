@@ -1,10 +1,10 @@
 trigger KexSyncVolunteerShift on GW_Volunteers__Volunteer_Shift__c (
         after delete, after insert, after undelete, after update) {
 
-	// Check if automatic sync is enabled.
-	if (!Karma_Exchange_Admin_Settings__c.getInstance().Auto_Sync__c) {
-		return;
-	}
+    // Check if automatic sync is enabled.
+    if (!Karma_Exchange_Settings__c.getInstance().Auto_Sync__c) {
+        return;
+    }
 
     List<GW_Volunteers__Volunteer_Shift__c> shiftsToSync;
     if(Trigger.isDelete) {

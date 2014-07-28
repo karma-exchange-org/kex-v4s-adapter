@@ -1,7 +1,7 @@
 @RestResource(urlMapping='/kex-api/*')
 global without sharing class KexRegistrationController {
 
-    private static final String ORG_SECRET = Karma_Exchange_Admin_Settings__c.getInstance().SecretKey__c;
+    private static final String ORG_SECRET = Karma_Exchange_Settings__c.getInstance().Karma_Exchange_Secret_Key__c;
 
     @HttpPost
     global static KexRestServiceResponse doPost(String action, String eventId,

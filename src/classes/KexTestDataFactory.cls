@@ -25,11 +25,11 @@ public class KexTestDataFactory {
         insert acc;
         accountId = acc.id;
 
-        Karma_Exchange_Admin_Settings__c adminSettings = new Karma_Exchange_Admin_Settings__c();
-        adminSettings.SecretKey__c = SECRET_KEY;
+        Karma_Exchange_Settings__c adminSettings = new Karma_Exchange_Settings__c();
+        adminSettings.Karma_Exchange_Secret_Key__c = SECRET_KEY;
+        adminSettings.Karma_Exchange_Organization_Id__c = 'KexTestOrgId';
+        adminSettings.Karma_Exchange_Server_Url__c = KEX_SERVER_URL;
         adminSettings.Organization__c = accountId;
-        adminSettings.OrganizationId__c = 'KexTestOrgId';
-        adminSettings.ServerUrl__c = KEX_SERVER_URL;
         adminSettings.Auto_Sync__c = true;
         insert adminSettings;
 
