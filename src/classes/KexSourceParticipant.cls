@@ -5,4 +5,18 @@ public with sharing class KexSourceParticipant {
 
     public String type;
     public KexBaseSourceUser user;
+    public Integer numVolunteers;
+    public Double hoursWorked;
+
+    public KexSourceParticipant(String type, KexBaseSourceUser user) {
+        this(type, user, 0, 0);
+    }
+
+    public KexSourceParticipant(String type, KexBaseSourceUser user, Integer numVolunteers,
+            Double hoursWorked) {
+        this.type = type;
+        this.user = user;
+        this.numVolunteers = numVolunteers;
+        this.hoursWorked = hoursWorked;
+    }
 }

@@ -25,12 +25,19 @@ public class KexTestDataFactory {
         insert acc;
         accountId = acc.id;
 
+        Contact defContact = new Contact(
+            Firstname=('DefaultContactFirst'),
+            Lastname=('DefaultContactLast'),
+            email=('DefaultContactEmail@x.y'));
+        insert defContact;
+
         Karma_Exchange_Settings__c adminSettings = new Karma_Exchange_Settings__c();
         adminSettings.Karma_Exchange_Secret_Key__c = SECRET_KEY;
         adminSettings.Karma_Exchange_Organization_Id__c = 'KexTestOrgId';
         adminSettings.Karma_Exchange_Server_Url__c = KEX_SERVER_URL;
         adminSettings.Organization__c = accountId;
         adminSettings.Auto_Sync__c = true;
+        adminSettings.Default_Shift_Contact__c = defContact.id;
         insert adminSettings;
 
         cmp = new Campaign(
@@ -83,6 +90,11 @@ public class KexTestDataFactory {
     }
 
     public GW_Volunteers__Volunteer_Hours__c registerVolunteer(GW_Volunteers__Volunteer_Shift__c shift, Contact volunteer) {
+        return registerVolunteer(shift, volunteer, 1);
+    }
+
+    public GW_Volunteers__Volunteer_Hours__c registerVolunteer(GW_Volunteers__Volunteer_Shift__c shift, Contact volunteer,
+            Integer numVolunteers) {
         volunteer.GW_Volunteers__Volunteer_Last_Web_Signup_Date__c = Date.today();
         update volunteer;
         DateTime shiftDate =
@@ -94,7 +106,7 @@ public class KexTestDataFactory {
             GW_Volunteers__Start_Date__c =
                 Date.newInstance(shiftDate.year(), shiftDate.month(), shiftDate.day()),
             GW_Volunteers__Status__c = 'Web Sign Up',
-            GW_Volunteers__Number_of_Volunteers__c = 1);
+            GW_Volunteers__Number_of_Volunteers__c = numVolunteers);
         insert hoursEntry;
         return hoursEntry;
     }
