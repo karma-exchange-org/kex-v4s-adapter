@@ -2,7 +2,7 @@ trigger KexSyncVolunteerJob on GW_Volunteers__Volunteer_Job__c (
         after delete, after insert, after undelete, after update) {
 
     // Check if automatic sync is enabled.
-    if (!Karma_Exchange_Settings__c.getInstance().Auto_Sync__c) {
+    if (!Karma_Exchange_Settings__c.getOrgDefaults().Auto_Sync__c) {
         return;
     }
 

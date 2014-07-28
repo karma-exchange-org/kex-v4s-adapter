@@ -9,7 +9,7 @@ global without sharing class KexAdminController {
     public CampaignMember contactLookupField { get; set; }
 
     public KexAdminController() {
-        customSettings = Karma_Exchange_Settings__c.getInstance();
+        customSettings = Karma_Exchange_Settings__c.getOrgDefaults();
         orgLookupField = new Campaign();
         if (customSettings.Organization__c != null) {
             orgLookupField.Volunteer_Job_Sponsor__c = customSettings.Organization__c;
@@ -36,7 +36,7 @@ global without sharing class KexAdminController {
 
     private void updateAutoSync() {
         Karma_Exchange_Settings__c oldSettings =
-            Karma_Exchange_Settings__c.getInstance();
+            Karma_Exchange_Settings__c.getOrgDefaults();
         if ((oldSettings != null) && (oldSettings.Auto_Sync__c != customSettings.Auto_Sync__c)) {
             if (customSettings.Auto_Sync__c == true) {
                 Id jobID = null;

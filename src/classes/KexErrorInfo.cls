@@ -19,12 +19,16 @@ public with sharing class KexErrorInfo {
     }
 
     public KexErrorInfo(Exception e) {
+        this(e, '');
+    }
+
+    public KexErrorInfo(Exception e, String addMsg) {
         if (e instanceof DmlException) {
             type = ErrorType.DML_EXCEPTION.name();
         } else {
             type = ErrorType.OTHER_EXCEPTION.name();
         }
-        message = e.getMessage();
+        message = e.getMessage() + addMsg;
         stackTrace = e.getStackTraceString();
     }
 }

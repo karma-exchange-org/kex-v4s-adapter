@@ -3,7 +3,7 @@ trigger KexUpdateCampaignVolunteerPrefs on Karma__Volunteer_Preferences_Per_Org_
 
     // First update any affected campaign member entries.
 
-    Id rootOrgId = Karma_Exchange_Settings__c.getInstance().Organization__c;
+    Id rootOrgId = Karma_Exchange_Settings__c.getOrgDefaults().Organization__c;
 
     Set<Id> affectedContacts =
         new Set<Id>();
@@ -48,7 +48,7 @@ trigger KexUpdateCampaignVolunteerPrefs on Karma__Volunteer_Preferences_Per_Org_
     update campaignMembersToUpdate;
 
     // Then queue up changes to sync to Karma Exchange.
-    if (Karma_Exchange_Settings__c.getInstance().Auto_Sync__c) {
+    if (Karma_Exchange_Settings__c.getOrgDefaults().Auto_Sync__c) {
 
         List<KexSyncTracker__c> pendingSyncReqs = new List<KexSyncTracker__c>();
         for(Id contactId : affectedContacts) {
