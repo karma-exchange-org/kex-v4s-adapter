@@ -13,6 +13,12 @@ private class KexSourceEventTest {
         testDataFactory.createShiftContact(shift, contact1, true);
         testDataFactory.createShiftContact(shift, contact2, false);
 
+        Contact volunteer1 = testDataFactory.createContact();
+        GW_Volunteers__Volunteer_Hours__c vhVol1 =
+            testDataFactory.registerVolunteer(shift, volunteer1, 4);
+        vhVol1.GW_Volunteers__Hours_Worked__c = 2.5;
+        update vhVol1;
+
         KexSourceEvent kexEvent = KexSourceEvent.toEvent(shift.id);
         System.assert(kexEvent != null);
         System.assert(kexEvent.shiftDescription.equals('shift description'));
@@ -44,7 +50,18 @@ private class KexSourceEventTest {
                        'organizers[1] != contact2 (): organizers[0]=' + organizers[1] +
                        ' contact2=' + contact2);
         System.assert(null == kexEvent.sourceAssociatedOrg);
-        // TODO(avaliani): validate conversion
+
+        List<KexSourceParticipant> volunteers = getVolunteers(kexEvent);
+        System.assert(volunteers.size() == 1, 'volunteers not found: ' + volunteers);
+        KexSourceParticipant vol1AsParticipant =
+            volunteers[0];
+        System.assert( (vol1AsParticipant.user.firstName.equals(volunteer1.firstName)) &&
+                       (vol1AsParticipant.user.lastName.equals(volunteer1.lastName)) &&
+                       (vol1AsParticipant.user.email.equalsIgnoreCase(volunteer1.email)) &&
+                       (vol1AsParticipant.numVolunteers == 4) &&
+                       (vol1AsParticipant.hoursWorked == 2.5),
+                       'vol1AsParticipant != volunteer1 : vol1AsParticipant=' + vol1AsParticipant +
+                       ' volunteer1=' + volunteer1);
     }
 
     static testMethod void testToEventGeoPt() {
@@ -135,13 +152,22 @@ private class KexSourceEventTest {
     }
 
     private static List<KexSourceParticipant> getOrganizers(KexSourceEvent kexEvent) {
+        return getParticipants(kexEvent, KexSourceParticipant.TYPE_ORGANIZER);
+    }
+
+    private static List<KexSourceParticipant> getVolunteers(KexSourceEvent kexEvent) {
+        return getParticipants(kexEvent, KexSourceParticipant.TYPE_REGISTERED);
+    }
+
+    private static List<KexSourceParticipant> getParticipants(KexSourceEvent kexEvent, String participantType) {
         List<KexSourceParticipant> organizers =
             new List<KexSourceParticipant>();
         for (KexSourceParticipant participant : kexEvent.sourceParticipants) {
-            if (KexSourceParticipant.TYPE_ORGANIZER == participant.type) {
+            if (participantType.equals(participant.type)) {
                 organizers.add(participant);
             }
         }
         return organizers;
     }
+
 }

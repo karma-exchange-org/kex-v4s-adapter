@@ -181,6 +181,8 @@ public without sharing class KexSourceEvent {
         List<GW_Volunteers__Volunteer_Hours__c> shiftVolunteers =
             [Select
                 GW_Volunteers__Status__c,
+                GW_Volunteers__Number_of_Volunteers__c,
+                GW_Volunteers__Hours_Worked__c,
                 GW_Volunteers__Contact__r.FirstName,
                 GW_Volunteers__Contact__r.LastName,
                 GW_Volunteers__Contact__r.Email,
@@ -210,11 +212,13 @@ public without sharing class KexSourceEvent {
                 participantType = KexSourceParticipant.TYPE_REGISTERED_NO_SHOW;
             }
             if (participantType != null) {
-                KexSourceParticipant participant = new KexSourceParticipant();
-                participant.type = participantType;
-                participant.user =
-                    new KexBaseSourceUser(shiftVolunteer.GW_Volunteers__Contact__r);
-                sourceParticipants.add(participant);
+                sourceParticipants.add(
+                    new KexSourceParticipant(
+                        participantType,
+                        new KexBaseSourceUser(shiftVolunteer.GW_Volunteers__Contact__r),
+                        shiftVolunteer.GW_Volunteers__Number_of_Volunteers__c.intValue(),
+                        (shiftVolunteer.GW_Volunteers__Hours_Worked__c == null) ? 0 :
+                            shiftVolunteer.GW_Volunteers__Hours_Worked__c.doubleValue() ));
             }
         }
 
@@ -274,11 +278,9 @@ public without sharing class KexSourceEvent {
     }
 
     private static KexSourceParticipant toOrganizer(Contact organizer) {
-        KexSourceParticipant participant = new KexSourceParticipant();
-        participant.type = KexSourceParticipant.TYPE_ORGANIZER;
-        participant.user =
-            new KexBaseSourceUser(organizer);
-        return participant;
+        return new KexSourceParticipant(
+            KexSourceParticipant.TYPE_ORGANIZER,
+            new KexBaseSourceUser(organizer));
     }
 
 }
