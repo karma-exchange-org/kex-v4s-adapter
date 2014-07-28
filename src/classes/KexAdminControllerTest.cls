@@ -38,13 +38,13 @@ private class KexAdminControllerTest {
 
         KexAdminController adminController = new KexAdminController();
 
-		// Just go for coverage.
+        // Just go for coverage.
         adminController.customSettings.Auto_Sync__c =
-        	!adminController.customSettings.Auto_Sync__c;
+            !adminController.customSettings.Auto_Sync__c;
         adminController.saveSettings();
 
         adminController.customSettings.Auto_Sync__c =
-        	!adminController.customSettings.Auto_Sync__c;
+            !adminController.customSettings.Auto_Sync__c;
         adminController.saveSettings();
     }
 }

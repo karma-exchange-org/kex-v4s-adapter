@@ -5,7 +5,7 @@ public without sharing class KexSourceEvent {
     private static final String VH_STATUS_COMPLETED = 'Completed';
     private static final String VH_STATUS_NO_SHOW = 'No-Show';
 
-    private static final Id DEFAULT_SHIFT_CONTACT = Karma_Exchange_Admin_Settings__c.getInstance().Default_Shift_Contact__c;
+    private static final Id DEFAULT_SHIFT_CONTACT = Karma_Exchange_Settings__c.getInstance().Default_Shift_Contact__c;
 
     public KexSourceEventInfo sourceEventInfo;
     public List<KexSourceParticipant> sourceParticipants = new List<KexSourceParticipant>();

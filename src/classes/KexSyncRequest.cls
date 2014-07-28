@@ -7,10 +7,10 @@ public without sharing class KexSyncRequest {
     public static final String ACTION_UPSERT = 'UPSERT';
     public static final String ACTION_DELETE = 'DELETE';
 
-    private static final String KEX_SERVER_URL = Karma_Exchange_Admin_Settings__c.getInstance().ServerUrl__c;
-    private static final String ORG_ID = Karma_Exchange_Admin_Settings__c.getInstance().OrganizationId__c;
-    private static final String ORG_SECRET = Karma_Exchange_Admin_Settings__c.getInstance().SecretKey__c;
-    private static final String ORG_ACCOUNT_ID = Karma_Exchange_Admin_Settings__c.getInstance().Organization__c;
+    private static final String KEX_SERVER_URL = Karma_Exchange_Settings__c.getInstance().Karma_Exchange_Server_Url__c;
+    private static final String ORG_ID = Karma_Exchange_Settings__c.getInstance().Karma_Exchange_Organization_Id__c;
+    private static final String ORG_SECRET = Karma_Exchange_Settings__c.getInstance().Karma_Exchange_Secret_Key__c;
+    private static final String ORG_ACCOUNT_ID = Karma_Exchange_Settings__c.getInstance().Organization__c;
 
     public static final String PATH_DERIVED_EVENT_SYNC = '/api/derived/event';
     public static final String PARAM_ORG_ID = 'org_id';

@@ -7,9 +7,9 @@
             </apex:pageBlockButtons>
             <apex:pageBlockSection columns="1">
                 <apex:inputField label="Organization Account" value="{!orgLookupField.Volunteer_Job_Sponsor__c}" required="true"/>
-                <apex:inputField label="Karma Exchange Organization Id" value="{!customSettings.OrganizationId__c}"/>
-                <apex:inputField label="Karma Exchange Secret Key" value="{!customSettings.SecretKey__c}"/>
-                <apex:inputField label="Karma Exchange Server Url" value="{!customSettings.ServerUrl__c}"/>
+                <apex:inputField label="Karma Exchange Organization Id" value="{!customSettings.Karma_Exchange_Organization_Id__c}"/>
+                <apex:inputField label="Karma Exchange Secret Key" value="{!customSettings.Karma_Exchange_Secret_Key__c}"/>
+                <apex:inputField label="Karma Exchange Server Url" value="{!customSettings.Karma_Exchange_Server_Url__c}"/>
                 <apex:inputField label="Default Shift Contact" value="{!contactLookupField.ContactId}"/>
                 <apex:inputField value="{!customSettings.Auto_Sync__c}"/>
             </apex:pageBlockSection>
