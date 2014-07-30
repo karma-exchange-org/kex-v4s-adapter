@@ -10,4 +10,13 @@ public with sharing virtual class KexBaseSourceUser {
         email = c.Email;
     }
 
+    // @VisibleForTesting
+    public KexBaseSourceUser() {
+    }
+
+    public virtual void validate() {
+        KexInvalidParamException.notNull('firstName', firstName);
+        KexInvalidParamException.notNull('lastName', lastName);
+        KexInvalidParamException.notNull('email', email);
+    }
 }

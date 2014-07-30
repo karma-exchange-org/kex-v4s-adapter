@@ -24,6 +24,7 @@
         <members>KexRegistrationController</members>
         <members>KexRegistrationControllerTest</members>
         <members>KexRegistrationLimitReachedException</members>
+        <members>KexRegistrationReq</members>
         <members>KexRestServiceResponse</members>
         <members>KexSourceEvent</members>
         <members>KexSourceEventTest</members>
