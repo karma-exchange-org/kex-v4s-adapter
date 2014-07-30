@@ -31,7 +31,7 @@ http://test.salesforce.com/packaging/installPackage.apexp?p0=04to0000000EFQ0
 
 Default installation settings are fine. Nothing extra needs to be checked or unchecked.
 
-##### [3] Enable public access to enable Karma Exchange to communicate to your db
+##### [3] Enable apex class access to allow Karma Exchange to communicate to your db
 
 *Note: All apis only execute if the org secret is validated.*
 
@@ -54,13 +54,11 @@ Default installation settings are fine. Nothing extra needs to be checked or unc
 
 TODO(avaliani): automate this step
 
-##### [5] Configure the Karma Exchange adminstrator settings for your organization
+##### [5] Configure the Karma Exchange settings
 
 * Select the "Karma Exchange" app
-* Select the "Karma Exchange Settings" tab
-* Click new
-* Specify the organization id, secret key, and server url from step [1]
-* (recommended) Specify a default shift contact / default organizer for your organization
+* Select the "Karma Exchange Admin" tab
+* Specify the required info. Note that the karma exchange organization id, karma exchange secret key, and karma exchange server url the same as in step [1].
 * Click save
 
 
@@ -102,15 +100,14 @@ d. Try registering and unregistering and see if the changes are reflected in sal
 
 * Select the "Karma Exchange" app
 * Select the "Karma Exchange Admin" tab
-* Click "Sync All Upcoming Volunteer Shifts"
+* Click the "Sync All Upcoming Volunteer Shifts" button in the "Admin Actions" section.
 
 ##### [10] Enable automatic volunteer shift sync
 
 * Select the "Karma Exchange" app
 * Select the "Karma Exchange Admin" tab
-* Click "Enable Automatic Volunteer Shift Sync"
-
-Note: if you have a live db then you should always enable this to prevent the tracking table from growing too large. In a future version of the unmanaged package we will only upload entries to the tracking table if automatic shift sync is enabled.
+* Check the "Automatic Sync" checkbox
+* Click the "Save" button
 
 ##### [11] Display a map of the Volunteer Job location
 
